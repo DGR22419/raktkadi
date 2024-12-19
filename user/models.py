@@ -143,3 +143,29 @@ class Donor(AbstractBaseUser, PermissionsMixin):
     )
     
 
+class BloodRequest(models.Model):
+    STATUS_CHOICES = [
+        ('PENDING', 'Pending'),
+        ('FULFILLED', 'Fulfilled'),
+        ('CANCELLED', 'Cancelled')
+    ]
+    
+    hospital_name = models.CharField(max_length=255, null=True, blank=True)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='blood_requests')
+    blood_group = models.CharField(max_length=5)
+    units_required = models.PositiveIntegerField()
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
+    urgency_level = models.CharField(max_length=10, choices=[
+        ('HIGH', 'High'),
+        ('MEDIUM', 'Medium'),
+        ('LOW', 'Low')
+    ])
+    created_at = models.DateTimeField(auto_now_add=True)
+    fulfilled_by = models.ForeignKey(Donor, on_delete=models.SET_NULL, null=True, blank=True, related_name='fulfilled_requests')
+    fulfilled_at = models.DateTimeField(null=True, blank=True)
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ['-created_at']
+    
+

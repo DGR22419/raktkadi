@@ -1,0 +1,27 @@
+# Django and REST Framework
+Django==5.0.2
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.3.1
+
+# API Documentation
+drf-yasg==1.21.7
+
+# Admin Interface Enhancement
+django-jazzmin==2.6.0
+
+# Development & Debug Tools
+python-decouple==3.8
+python-dotenv==1.0.1
+
+# Logging & Monitoring
+# logging==0.4.9.6
+
+# Database (Currently using SQLite, but if you plan to switch to PostgreSQL)
+# psycopg2-binary==2.9.9
+
+# Production Server (for deployment)
+gunicorn==21.2.0
+whitenoise==6.6.0
+
+# Security
+django-cors-headers==4.3.1

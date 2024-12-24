@@ -11,8 +11,10 @@ from django.utils import timezone
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import authenticate
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 import logging
+from .permissions import IsMedicalCenter, IsRegularUserOrMedicalCenter
+from rest_framework.exceptions import PermissionDenied as DRFPermissionDenied, AuthenticationFailed
 
 logger = logging.getLogger(__name__)
 
@@ -57,25 +59,62 @@ class BloodRequestSerializer(serializers.ModelSerializer):
         read_only_fields = ['status', 'fulfilled_by', 'fulfilled_at']
 
 class RegularUserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
+    password = serializers.CharField(
+        write_only=True,
+        required=True,
+        style={'input_type': 'password'}
+    )
 
     class Meta:
         model = RegularUser
         fields = ['id', 'email', 'name', 'contact', 'date_joined', 'password']
         read_only_fields = ['date_joined']
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
 
     def create(self, validated_data):
         password = validated_data.pop('password')
-        user = RegularUser.objects.create(**validated_data)
+        user = RegularUser(**validated_data)
         user.set_password(password)
         user.save()
         return user
+
+    def update(self, instance, validated_data):
+        if 'password' in validated_data:
+            password = validated_data.pop('password')
+            instance.set_password(password)
+        return super().update(instance, validated_data)
 
 # ViewSets
 class MedicalCenterViewSet(viewsets.ModelViewSet):
     queryset = MedicalCenter.objects.all()
     serializer_class = MedicalCenterSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_permissions(self):
+        logger.info(f"Action being performed: {self.action}")
+        if self.action == 'create':
+            # Block authenticated users from creating medical centers
+            if self.request.user and self.request.user.is_authenticated:
+                logger.info("Authenticated user attempting to create medical center")
+                return [permissions.IsAdminUser()]
+            logger.info("Allowing unauthenticated medical center creation")
+            return [permissions.AllowAny()]
+        logger.info("Requiring medical center permission")
+        return [IsMedicalCenter()]
+
+    def handle_exception(self, exc):
+        if isinstance(exc, (PermissionDenied, DRFPermissionDenied)):
+            return Response(
+                {"detail": "You don't have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        if isinstance(exc, AuthenticationFailed):
+            return Response(
+                {"detail": "You don't have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        return super().handle_exception(exc)
 
     @swagger_auto_schema(
         operation_summary="List all medical centers",
@@ -94,7 +133,7 @@ class MedicalCenterViewSet(viewsets.ModelViewSet):
 class PatientViewSet(viewsets.ModelViewSet):
     queryset = Patient.objects.all()
     serializer_class = PatientSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsRegularUserOrMedicalCenter]
 
     @swagger_auto_schema(
         operation_summary="List all patients",
@@ -113,7 +152,7 @@ class PatientViewSet(viewsets.ModelViewSet):
 class DonorViewSet(viewsets.ModelViewSet):
     queryset = Donor.objects.all()
     serializer_class = DonorSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsRegularUserOrMedicalCenter]
 
     @swagger_auto_schema(
         operation_summary="List all donors",
@@ -132,17 +171,43 @@ class DonorViewSet(viewsets.ModelViewSet):
 class BloodRequestViewSet(viewsets.ModelViewSet):
     queryset = BloodRequest.objects.all()
     serializer_class = BloodRequestSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsRegularUserOrMedicalCenter]
+
+    def get_queryset(self):
+        # Handle swagger schema generation
+        if getattr(self, 'swagger_fake_view', False):
+            return BloodRequest.objects.none()
+
+        user = self.request.user
+        logger.info(f"BloodRequest queryset for user type: {type(user)}")
+        
+        if isinstance(user, MedicalCenter):
+            # Medical centers can see all requests
+            return BloodRequest.objects.all()
+        
+        # Regular users can only see requests where they are the patient
+        if isinstance(user, RegularUser):
+            return BloodRequest.objects.filter(patient=user)
+            
+        return BloodRequest.objects.none()
+
+    def perform_create(self, serializer):
+        if isinstance(self.request.user, RegularUser):
+            # If regular user is creating, they can only create for themselves
+            serializer.save(patient=self.request.user)
+        else:
+            # Medical centers can create for any patient
+            serializer.save()
 
     @swagger_auto_schema(
-        operation_summary="List all blood requests",
-        operation_description="Returns a list of all blood requests"
+        operation_summary="List blood requests",
+        operation_description="Returns blood requests based on user permissions"
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
     @swagger_auto_schema(
-        operation_summary="Create a blood request",
+        operation_summary="Create blood request",
         operation_description="Create a new blood request"
     )
     def create(self, request, *args, **kwargs):
@@ -180,28 +245,36 @@ class BloodRequestViewSet(viewsets.ModelViewSet):
 class RegularUserViewSet(viewsets.ModelViewSet):
     queryset = RegularUser.objects.all()
     serializer_class = RegularUserSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
     def get_permissions(self):
-        if self.action == 'create':
-            return [permissions.AllowAny()]
-        return [permissions.IsAuthenticated()]
+        logger.info(f"Regular user action being performed: {self.action}")
+        if self.action in ['create', 'destroy']:
+            # Only medical centers can create/delete users
+            return [IsMedicalCenter()]
+        return [IsRegularUserOrMedicalCenter()]
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        
-        # Log the creation
-        logger.info(f"Created new RegularUser: {user.email}")
-        
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    def handle_exception(self, exc):
+        if isinstance(exc, (PermissionDenied, DRFPermissionDenied)):
+            return Response(
+                {"detail": "You don't have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        if isinstance(exc, AuthenticationFailed):
+            return Response(
+                {"detail": "You don't have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        return super().handle_exception(exc)
 
     def get_queryset(self):
         user = self.request.user
+        logger.info(f"User type in queryset: {type(user)}")
+        
         if isinstance(user, MedicalCenter):
+            logger.info("Medical center accessing user list")
             return RegularUser.objects.all()
+        
+        logger.info("Regular user accessing user list")
         return RegularUser.objects.filter(id=user.id)
 
     @swagger_auto_schema(
@@ -216,52 +289,118 @@ class RegularUserViewSet(viewsets.ModelViewSet):
         operation_description="Create a new regular user account"
     )
     def create(self, request, *args, **kwargs):
+        # Add extra validation for user creation
+        if not isinstance(request.user, MedicalCenter):
+            return Response(
+                {"detail": "Only medical centers can create users"},
+                status=status.HTTP_403_FORBIDDEN
+            )
         return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+
+        # Handle password update if it's included
+        if 'password' in serializer.validated_data:
+            password = serializer.validated_data.pop('password')
+            instance.set_password(password)
+        
+        # Update other fields
+        for attr, value in serializer.validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        return Response(serializer.data)
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
-        logger.info(f"Attempting authentication with email: {attrs[self.username_field]}")
+        email = attrs.get('email')
+        password = attrs.get('password')
         
-        # First try to authenticate as RegularUser
-        try:
-            user = RegularUser.objects.get(email=attrs[self.username_field])
-            logger.info(f"Found RegularUser with email: {attrs[self.username_field]}")
-            
-            if user.check_password(attrs['password']):
-                logger.info("Password check successful for RegularUser")
-                if not user.is_active:
-                    logger.info("RegularUser account is not active")
-                    raise serializers.ValidationError("User account is not active")
-                self.user = user
-                logger.info("RegularUser authentication successful")
-                return super().validate(attrs)
-            else:
-                logger.info("Password check failed for RegularUser")
-        except RegularUser.DoesNotExist:
-            logger.info(f"No RegularUser found with email: {attrs[self.username_field]}")
+        # Log the authentication attempt
+        logger.info(f"Attempting authentication for email: {email}")
 
-        # If RegularUser authentication fails, try MedicalCenter
-        try:
-            user = MedicalCenter.objects.get(email=attrs[self.username_field])
-            logger.info(f"Found MedicalCenter with email: {attrs[self.username_field]}")
-            
-            if user.check_password(attrs['password']):
-                logger.info("Password check successful for MedicalCenter")
-                if not user.is_active:
-                    logger.info("MedicalCenter account is not active")
-                    raise serializers.ValidationError("User account is not active")
-                self.user = user
-                logger.info("MedicalCenter authentication successful")
-                return super().validate(attrs)
-            else:
-                logger.info("Password check failed for MedicalCenter")
-        except MedicalCenter.DoesNotExist:
-            logger.info(f"No MedicalCenter found with email: {attrs[self.username_field]}")
+        # Try to authenticate as MedicalCenter first
+        user = authenticate(self.context['request'], username=email, password=password)
+        
+        if not user:
+            # If not a medical center, try RegularUser
+            try:
+                regular_user = RegularUser.objects.get(email=email)
+                if regular_user.check_password(password):
+                    user = regular_user
+                    logger.info(f"Authenticated as RegularUser: {email}")
+            except ObjectDoesNotExist:
+                logger.warning(f"No user found for email: {email}")
+                raise serializers.ValidationError(
+                    {"detail": "No active account found with the given credentials"}
+                )
 
-        logger.info("Authentication failed for both RegularUser and MedicalCenter")
-        raise serializers.ValidationError(
-            'No active account found with the given credentials'
-        )
+        if not user:
+            logger.warning(f"Invalid password for email: {email}")
+            raise serializers.ValidationError(
+                {"detail": "No active account found with the given credentials"}
+            )
+
+        if not user.is_active:
+            logger.warning(f"Inactive user attempt: {email}")
+            raise serializers.ValidationError(
+                {"detail": "User account is disabled"}
+            )
+
+        # Set the user on the serializer instance
+        self.user = user
+
+        # Get the token for the user
+        refresh = self.get_token(user)
+        
+        data = {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+            'email': user.email,
+            'name': user.name,
+        }
+
+        # Add user type information to response
+        if isinstance(user, MedicalCenter):
+            data['user_type'] = 'medical_center'
+            data['is_medical_center'] = True
+        else:
+            data['user_type'] = 'regular_user'
+            data['is_medical_center'] = False
+        
+        logger.info(f"Successfully generated token for {email}")
+        return data
+
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        
+        # Add custom claims
+        if isinstance(user, MedicalCenter):
+            token['user_type'] = 'medical_center'
+            token['is_medical_center'] = True
+        else:
+            token['user_type'] = 'regular_user'
+            token['is_medical_center'] = False
+            
+        token['email'] = user.email
+        return token
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        
+        try:
+            serializer.is_valid(raise_exception=True)
+            return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        except serializers.ValidationError as e:
+            return Response(
+                {"detail": str(e.detail[0]) if isinstance(e.detail, list) else e.detail},
+                status=status.HTTP_401_UNAUTHORIZED
+            )

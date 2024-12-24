@@ -179,6 +179,7 @@ JAZZMIN_SETTINGS = {
 # Authentication backends
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
+    'user.backends.CustomAuthBackend',
 ]
 
 # Add this to your settings.py

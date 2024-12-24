@@ -207,4 +207,9 @@ class RegularUser(AbstractBaseUser, PermissionsMixin):
         related_query_name='regular_user'
     )
     
+    def save(self, *args, **kwargs):
+        if self._state.adding and self.password and not self.password.startswith(('pbkdf2_sha256$', 'bcrypt$', 'argon2')):
+            self.set_password(self.password)
+        super().save(*args, **kwargs)
+    
 

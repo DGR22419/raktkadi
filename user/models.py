@@ -24,7 +24,7 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault('is_superuser', True)
         return self.create_user(email, password, **extra_fields)
 
-class Hospital(AbstractBaseUser, PermissionsMixin):
+class MedicalCenter(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=255)
     contact = models.CharField(validators=[phone_regex], max_length=17)
@@ -43,24 +43,24 @@ class Hospital(AbstractBaseUser, PermissionsMixin):
     
     class Meta:
         permissions = [
-            ("can_view_hospital", "Can view hospital"),
+            ("can_view_medical_center", "Can view medical center"),
         ]
-        verbose_name = "Hospital"
-        verbose_name_plural = "Hospitals"
+        verbose_name = "Medical Center"
+        verbose_name_plural = "Medical Centers"
 
     groups = models.ManyToManyField(
         'auth.Group',
         verbose_name='groups',
         blank=True,
-        related_name='hospital_set',
-        related_query_name='hospital'
+        related_name='medical_center_set',
+        related_query_name='medical_center'
     )
     user_permissions = models.ManyToManyField(
         'auth.Permission',
         verbose_name='user permissions',
         blank=True,
-        related_name='hospital_set',
-        related_query_name='hospital'
+        related_name='medical_center_set',
+        related_query_name='medical_center'
     )
 
 class Patient(AbstractBaseUser, PermissionsMixin):
@@ -167,5 +167,44 @@ class BloodRequest(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+    
+
+class RegularUser(AbstractBaseUser, PermissionsMixin):
+    email = models.EmailField(unique=True)
+    name = models.CharField(max_length=255)
+    contact = models.CharField(validators=[phone_regex], max_length=17)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    date_joined = models.DateTimeField(auto_now_add=True)
+
+    objects = CustomUserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['name', 'contact']
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        permissions = [
+            ("can_view_basic_info", "Can view basic information"),
+        ]
+        verbose_name = "Regular User"
+        verbose_name_plural = "Regular Users"
+
+    groups = models.ManyToManyField(
+        'auth.Group',
+        verbose_name='groups',
+        blank=True,
+        related_name='regular_user_set',
+        related_query_name='regular_user'
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        verbose_name='user permissions',
+        blank=True,
+        related_name='regular_user_set',
+        related_query_name='regular_user'
+    )
     
 

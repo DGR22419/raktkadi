@@ -15,30 +15,26 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
 from django.urls import path, include
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenRefreshView
+from user.views import CustomTokenObtainPairView
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
 
-urlpatterns = [
-    path('admin/', admin.site.urls),
-]
-
 schema_view = get_schema_view(
     openapi.Info(
         title="Raktkadi API",
-        default_version='v3',
-        description="API documentation for Raktkadi blood bank management system",
+        default_version='v1',
+        description="API for Raktkadi Blood Bank Management System",
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
-    
 )
 
-urlpatterns += [
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/', include('user.urls')),
     path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),

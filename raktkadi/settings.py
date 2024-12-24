@@ -134,7 +134,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 ###########################################################################################
 
 # AUTH_USER_MODEL = 'login.HospitalUser'
-AUTH_USER_MODEL = 'user.Hospital'
+AUTH_USER_MODEL = 'user.MedicalCenter'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -153,6 +153,8 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
     'AUTH_HEADER_TYPES': ('Bearer',),
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
 }
 
 SWAGGER_SETTINGS = {
@@ -172,4 +174,31 @@ JAZZMIN_SETTINGS = {
     "site_brand": "Raktkadi",
     "welcome_sign": "Welcome to Raktkadi Blood Bank Management System",
     "copyright": "Raktkadi",
+}
+
+# Authentication backends
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+# Add this to your settings.py
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'user': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
 }

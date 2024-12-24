@@ -1,25 +1,47 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from .models import MedicalCenter, Patient, Donor, BloodRequest, RegularUser
 
-# Register your models here.
-from .models import Hospital, Patient, Donor
+class MedicalCenterAdmin(UserAdmin):
+    list_display = ('email', 'name', 'contact', 'address', 'date_joined', 'is_staff')
+    search_fields = ('email', 'name')
+    ordering = ('email',)
 
-@admin.register(Hospital)
-class HospitalAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'contact', 'address', 'date_joined')
-    search_fields = ('name', 'email')
-    list_filter = ('is_active', 'date_joined')
-    ordering = ('-date_joined',)
+    fieldsets = (
+        (None, {'fields': ('email', 'password')}),
+        ('Personal info', {'fields': ('name', 'contact', 'address')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+    )
 
-@admin.register(Patient) 
-class PatientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'contact', 'blood_group', 'date_joined')
-    search_fields = ('name', 'email', 'blood_group')
-    list_filter = ('blood_group', 'is_active', 'date_joined')
-    ordering = ('-date_joined',)
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'password1', 'password2', 'name', 'contact', 'address'),
+        }),
+    )
 
-@admin.register(Donor)
-class DonorAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'contact', 'blood_group', 'last_donation', 'date_joined')
-    search_fields = ('name', 'email', 'blood_group')
-    list_filter = ('blood_group', 'is_active', 'date_joined')
-    ordering = ('-date_joined',)
+class RegularUserAdmin(UserAdmin):
+    list_display = ('email', 'name', 'contact', 'date_joined', 'is_active')
+    search_fields = ('email', 'name')
+    ordering = ('email',)
+
+    fieldsets = (
+        (None, {'fields': ('email', 'password')}),
+        ('Personal info', {'fields': ('name', 'contact')}),
+        ('Permissions', {'fields': ('is_active',)}),
+        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+    )
+
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'password1', 'password2', 'name', 'contact'),
+        }),
+    )
+
+admin.site.register(MedicalCenter, MedicalCenterAdmin)
+admin.site.register(Patient)
+admin.site.register(Donor)
+admin.site.register(BloodRequest)
+admin.site.register(RegularUser, RegularUserAdmin)

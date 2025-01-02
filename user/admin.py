@@ -41,7 +41,7 @@ class RegularUserAdmin(UserAdmin):
     )
 
 admin.site.register(MedicalCenter, MedicalCenterAdmin)
-admin.site.register(Patient)
-admin.site.register(Donor)
-admin.site.register(BloodRequest)
+# admin.site.register(Patient)
+# admin.site.register(Donor)
+# admin.site.register(BloodRequest)
 admin.site.register(RegularUser, RegularUserAdmin)

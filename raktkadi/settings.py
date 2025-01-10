@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-o4sn5a9ke9wcl5j15ouy@d-9v9qtzq401q&z3@sm39pi27q8aw
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',  # Add Django REST framework
     'rest_framework_simplejwt',
     'drf_yasg',
+    'corsheaders',
 
     'users',
 ]
@@ -48,12 +49,55 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+SECURE_SSL_REDIRECT = True
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://dev22419raktkadi.share.zrok.io",
+    "https://raktkadi.share.zrok.io",
+    "http://localhost:5173",
+]
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "https://dev22419raktkadi.share.zrok.io",
+    "https://raktkadi.share.zrok.io",
+    "http://localhost:5173",
+]
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
+
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
+
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'raktkadi.urls'
 

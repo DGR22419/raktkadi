@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-from datetime import timedelta
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,18 +20,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-j_pn96azjto^+yf#emr5v630&m*tjjo5h&^!zo(2ip=b$6980e'
+SECRET_KEY = 'django-insecure-o4sn5a9ke9wcl5j15ouy@d-9v9qtzq401q&z3@sm39pi27q8aw'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ["https://dev22419raktkadi.share.zrok.io"]
+ALLOWED_HOSTS = []
+
 
 # Application definition
 
 INSTALLED_APPS = [
-    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,65 +38,22 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'rest_framework',
+    'rest_framework',  # Add Django REST framework
     'rest_framework_simplejwt',
     'drf_yasg',
-    'corsheaders',
 
-    'user',
+    'users',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.common.CommonMiddleware',
 ]
-
-SECURE_SSL_REDIRECT = True
-
-CSRF_TRUSTED_ORIGINS = [
-    "https://dev22419raktkadi.share.zrok.io",
-    "http://localhost:5173",
-]
-
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-    "https://dev22419raktkadi.share.zrok.io",
-    "http://localhost:5173",
-]
-
-CORS_ALLOW_METHODS = [
-    "DELETE",
-    "GET",
-    "OPTIONS",
-    "PATCH",
-    "POST",
-    "PUT",
-]
-
-CORS_ALLOW_HEADERS = [
-    "accept",
-    "accept-encoding",
-    "authorization",
-    "content-type",
-    "dnt",
-    "origin",
-    "user-agent",
-    "x-csrftoken",
-    "x-requested-with",
-]
-
-
-CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'raktkadi.urls'
 
@@ -172,12 +128,15 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-###########################################################################################
-# additionaly added settings : 
-###########################################################################################
 
-# AUTH_USER_MODEL = 'login.HospitalUser'
-AUTH_USER_MODEL = 'user.MedicalCenter'
+## settings custome ##  
+
+AUTH_USER_MODEL = 'users.Admin'  # Replace 'yourappname' with your actual app name
+
+AUTHENTICATION_BACKENDS = [
+    'users.backends.CustomAuthBackend',
+    # 'django.contrib.auth.backends.ModelBackend',  # Keep the default backend as fallback
+]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -188,61 +147,21 @@ REST_FRAMEWORK = {
     ),
 }
 
-# simple jwt settings  :
+# Optional: Configure JWT settings
+from datetime import timedelta
+
+from rest_framework_simplejwt.settings import api_settings
+
+api_settings.USER_ID_FIELD = 'email'
+api_settings.USER_ID_CLAIM = 'email'
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # Token valid for 30 minutes
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # Refresh token valid for 1 day
+    'USER_ID_FIELD': 'email',
+    'USER_ID_CLAIM': 'email',
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # Access token lifespan
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),    # Refresh token lifespan
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
-    'AUTH_HEADER_TYPES': ('Bearer',),
-    'USER_ID_FIELD': 'id',
-    'USER_ID_CLAIM': 'user_id',
-}
-
-SWAGGER_SETTINGS = {
-    'SECURITY_DEFINITIONS': {
-        'Bearer': {
-            'type': 'apiKey',
-            'name': 'Authorization',
-            'in': 'header'
-        }
-    },
-    'USE_SESSION_AUTH': False
-}
-
-# jazzmin settings :
-
-JAZZMIN_SETTINGS = {
-    "site_brand": "Raktkadi",
-    "welcome_sign": "Welcome to Raktkadi Blood Bank Management System",
-    "copyright": "Raktkadi",
-}
-
-# Authentication backends
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'user.backends.CustomAuthBackend',
-]
-
-# Add this to your settings.py
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO',
-    },
-    'loggers': {
-        'user': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': True,
-        },
-    },
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': 'your_secret_key',  # Replace with a secure key
 }

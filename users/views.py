@@ -7,13 +7,28 @@ from rest_framework.permissions import AllowAny , IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets
 
+# class LoginView(APIView):
+#     permission_classes = [AllowAny]
+#     def post(self, request):
+#         serializer = LoginSerializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
 class LoginView(APIView):
     permission_classes = [AllowAny]
+
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        
+        # Validate the input data
+        if not serializer.is_valid():
+            return Response(
+                {"error": "Invalid credentials."},
+                status=status.HTTP_200_OK
+            )
+        
+        # If valid, return the validated data
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
-
 
 class BloodBankView(APIView):
     permission_classes = [AllowAny]

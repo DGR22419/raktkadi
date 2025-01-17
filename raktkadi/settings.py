@@ -202,8 +202,8 @@ api_settings.USER_ID_CLAIM = 'email'
 SIMPLE_JWT = {
     'USER_ID_FIELD': 'email',
     'USER_ID_CLAIM': 'email',
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # Access token lifespan
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),    # Refresh token lifespan
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),  # Access token lifespan
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=60),    # Refresh token lifespan
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
     'ALGORITHM': 'HS256',

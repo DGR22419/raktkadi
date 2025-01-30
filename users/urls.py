@@ -1,23 +1,27 @@
-from django.urls import path , include
+from django.urls import path
 from .views import *
-from rest_framework.routers import DefaultRouter
-from rest_framework_simplejwt.views import (
-    TokenRefreshView,
-    TokenVerifyView,
-)
-
 
 urlpatterns = [
-    # path('staff/', StaffRegisterLoginView.as_view(), name='staff-register-login'),
-    path('token/', LoginView.as_view(), name='token_obtain_pair'),  # Login endpoint
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Refresh token
-    path('token/verify/', TokenVerifyView.as_view(), name='token_verify'), 
-    path('blood-bank/', BloodBankView.as_view()),
-    path('blood-bank/<str:email>/', BloodBankView.as_view()),
-    path('staff/', StaffView.as_view()),
-    path('staff/<str:email>/', StaffView.as_view()),
-    path('donor/', DonorView.as_view()),
-    path('donor/<str:email>/', DonorView.as_view()),
-    path('consumer/', ConsumerView.as_view()),
-    path('consumer/<str:email>/', ConsumerView.as_view())
+
+    ## login urls ##
+    path('login/', LoginView.as_view(), name='login'),
+
+    ## User urls ##
+    path('blood-banks/', BloodBankView.as_view(), name='blood-bank-list'),
+    path('blood-banks/verified/', VerifiedBloodBankView.as_view(), name='verified-blood-bank-list'),
+    path('blood-banks/<str:email>/', BloodBankView.as_view(), name='blood-bank-detail'),
+    path('staff/', StaffView.as_view(), name='staff'),
+    path('staff/<str:email>/', StaffView.as_view(), name='staff-detail'),
+    path('donors/', DonorView.as_view(), name='donor-list'),
+    path('donors/<str:email>/', DonorView.as_view(), name='donor-detail'),
+    path('consumers/', ConsumerView.as_view(), name='consumers'),
+    path('consumers/<str:email>/', ConsumerView.as_view(), name='consumer_detail'),
+
+    ## Test urls ##
+    path('test/bloodbank/', Test_blood_bank.as_view()),
+    path('test/staff/', Test_staff.as_view()),
+    path('test/donor/', Test_donor.as_view()),
+    path('test/consumer/', Test_consumer.as_view()),
+
+    ###############################################################################
 ]

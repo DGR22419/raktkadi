@@ -1,8 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import BaseUserManager, PermissionsMixin , AbstractBaseUser
+from django.contrib.auth.models import BaseUserManager, PermissionsMixin, AbstractBaseUser
 from django.core.validators import RegexValidator
 from django.utils.timezone import now
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.hashers import make_password
+import os
 
 # Validator for phone numbers
 phone_regex = RegexValidator(
@@ -10,7 +11,6 @@ phone_regex = RegexValidator(
     message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."
 )
 
-# Blood Bank Model
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -24,6 +24,7 @@ class CustomUserManager(BaseUserManager):
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('user_type', 'ADMIN')
 
         if extra_fields.get('is_staff') is not True:
             raise ValueError('Superuser must have is_staff=True.')
@@ -37,183 +38,107 @@ class Admin(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=255)
     contact = models.CharField(validators=[phone_regex], max_length=17)
     is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=True)
-    is_superuser = models.BooleanField(default=True)  # Superuser flag
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
     created_date = models.DateTimeField(default=now)
     modified_date = models.DateTimeField(auto_now=True)
+    user_type = models.CharField(
+        max_length=20,
+        choices=[
+            ('ADMIN', 'Admin'),
+            ('BLOOD_BANK', 'Blood Bank'),
+            ('STAFF', 'Staff'),
+            ('DONOR', 'Donor'),
+            ('CONSUMER', 'Consumer')
+        ],
+        default='ADMIN'
+    )
 
     objects = CustomUserManager()
 
-    USERNAME_FIELD = 'email'  # Email is the unique identifier
-    REQUIRED_FIELDS = []  # No need for a username
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['name']
 
     def __str__(self):
-        return self.name
+        return self.email
 
     class Meta:
-        verbose_name = "Admin"
+        verbose_name = "User"
         verbose_name_plural = "Admins"
-############################################################
-class BloodBank(models.Model):
-    email = models.EmailField(unique=True, primary_key=True)
-    name = models.CharField(max_length=255 , blank=False )
-    password = models.CharField(max_length=128)
-    contact = models.CharField(validators=[phone_regex], max_length=17)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    date_joined = models.DateTimeField(auto_now_add=True)
-    created_date = models.DateTimeField(default=now)
-    modified_date = models.DateTimeField(auto_now=True)
+
+def store_license(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = f"{instance.user.email}.{ext}"
+    return os.path.join('blood_bank_documents', 'license' ,  filename)
+
+def store_registration(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = f"{instance.user.email}.{ext}"
+    return os.path.join('blood_bank_documents', 'registration_cretificate' ,  filename)
+
+def store_tax(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = f"{instance.user.email}.{ext}"
+    return os.path.join('blood_bank_documents', 'tax_documents' ,  filename)
+
+class BloodBankProfile(models.Model):
+    user = models.OneToOneField(Admin, on_delete=models.CASCADE, related_name='blood_bank_profile')
     address = models.TextField()
-    blood_bank_name = models.CharField(max_length=255)
     status = models.CharField(
         max_length=10,
         choices=[('PENDING', 'Pending'), ('VERIFIED', 'Verified'), ('REJECTED', 'Rejected')],
         default='PENDING'
     )
-    # documents = models.FileField(upload_to='blood_bank_documents/', blank=True, null=True)
-    # Document fields
+    license_document = models.FileField(upload_to=store_license , blank=True, null=True)
+    registration_certificate = models.FileField(upload_to=store_registration, blank=True, null=True)
+    tax_documents = models.FileField(upload_to=store_tax, blank=True, null=True)
+
+    # license_document = models.FileField(upload_to=rename_file, blank=True, null=True)
+    # registration_certificate = models.FileField(upload_to=rename_file, blank=True, null=True)
+    # tax_documents = models.FileField(upload_to=rename_file, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.user.email}"
     
-    license_document = models.FileField(upload_to='blood_bank_documents/licenses/', blank=True, null=True)
-    registration_certificate = models.FileField(upload_to='blood_bank_documents/registration_certificates/', blank=True, null=True)
-    tax_documents = models.FileField(upload_to='blood_bank_documents/tax_documents/', blank=True, null=True)
-
-    # File upload settings (optional, to limit size or types)
-    max_file_size = 5 * 1024 * 1024  # 5 MB
-    allowed_types = ['application/pdf', 'image/jpeg', 'image/png']
-
-    objects = CustomUserManager()
-
-    USERNAME_FIELD = 'email'  # Specify that email will be used as the login field
-    REQUIRED_FIELDS = [] 
-
     class Meta:
         verbose_name = "Blood Bank"
         verbose_name_plural = "Blood Banks"
-    
-    def set_password(self, raw_password):
-        """Hashes the password and stores it."""
-        self.password = make_password(raw_password)
 
-    def check_password(self, raw_password):
-        """Verifies the provided password against the stored hash."""
-        return check_password(raw_password, self.password)
-    
-    def save(self, *args, **kwargs):
-        if self.pk is None or not BloodBank.objects.filter(pk=self.pk).exists():
-            self.set_password(self.password)
-        super(BloodBank, self).save(*args, **kwargs)
+class StaffProfile(models.Model):
+    user = models.OneToOneField(Admin, on_delete=models.CASCADE, related_name='staff_profile')
+    role = models.CharField(max_length=255)
+    # first_name = models.CharField(max_length=255)
+    # last_name = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.name
-
-# Staff Model
-class Staff(models.Model):
-# class Staff(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(unique=True, primary_key=True)
-    name = models.CharField(max_length=255)
-    password = models.CharField(max_length=128)
-    contact = models.CharField(validators=[phone_regex], max_length=17)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    date_joined = models.DateTimeField(auto_now_add=True)
-    created_date = models.DateTimeField(default=now)
-    modified_date = models.DateTimeField(auto_now=True)
-    role = models.CharField(max_length=255)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-
-    objects = CustomUserManager()
-
-    USERNAME_FIELD = 'email'  # Specify that email will be used as the login field
-    REQUIRED_FIELDS = [] 
-
+        return f"{self.user.email}"
+    
     class Meta:
         verbose_name = "Staff"
-        verbose_name_plural = "Staff"
+        verbose_name_plural = "Staffs"
 
-    def set_password(self, raw_password):
-        """Hashes the password and stores it."""
-        self.password = make_password(raw_password)
-
-    def check_password(self, raw_password):
-        """Verifies the provided password against the stored hash."""
-        return check_password(raw_password, self.password)
-    
-    def save(self, *args, **kwargs):
-        if self.pk is None or not Staff.objects.filter(pk=self.pk).exists():
-            self.set_password(self.password)
-        super(Staff, self).save(*args, **kwargs)
-
-# Donor Model
-class Donor(models.Model):
-    email = models.EmailField(unique=True, primary_key=True)
-    name = models.CharField(max_length=255)
-    password = models.CharField(max_length=128)
-    contact = models.CharField(validators=[phone_regex], max_length=17)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    date_joined = models.DateTimeField(auto_now_add=True)
-    created_date = models.DateTimeField(default=now)
-    modified_date = models.DateTimeField(auto_now=True)
+class DonorProfile(models.Model):
+    user = models.OneToOneField(Admin, on_delete=models.CASCADE, related_name='donor_profile')
     blood_group = models.CharField(max_length=5)
     last_donation = models.DateField(null=True, blank=True)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
     address = models.TextField()
 
-    objects = CustomUserManager()
-
-    USERNAME_FIELD = 'email'  # Specify that email will be used as the login field
-    REQUIRED_FIELDS = [] 
-
+    def __str__(self):
+        return f"{self.user.email}"
+    
     class Meta:
         verbose_name = "Donor"
         verbose_name_plural = "Donors"
 
-    def set_password(self, raw_password):
-        """Hashes the password and stores it."""
-        self.password = make_password(raw_password)
-
-    def check_password(self, raw_password):
-        """Verifies the provided password against the stored hash."""
-        return check_password(raw_password, self.password)
-    
-    def save(self, *args, **kwargs):
-        if self.pk is None or not Donor.objects.filter(pk=self.pk).exists():
-            self.set_password(self.password)
-        super(Donor, self).save(*args, **kwargs)
-
-# Consumer Model
-class Consumer(models.Model):
-    email = models.EmailField(unique=True, primary_key=True)
-    name = models.CharField(max_length=255)
-    password = models.CharField(max_length=128)
-    contact = models.CharField(validators=[phone_regex], max_length=17)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    date_joined = models.DateTimeField(auto_now_add=True)
-    created_date = models.DateTimeField(default=now)
-    modified_date = models.DateTimeField(auto_now=True)
-    address = models.TextField()
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
+class ConsumerProfile(models.Model):
+    user = models.OneToOneField(Admin, on_delete=models.CASCADE, related_name='consumer_profile')
     blood_group = models.CharField(max_length=5)
+    address = models.TextField()
 
-    objects = CustomUserManager()
-
-    USERNAME_FIELD = 'email'  # Specify that email will be used as the login field
-    REQUIRED_FIELDS = [] 
-
+    def __str__(self):
+        return f"{self.user.email}"
+    
     class Meta:
         verbose_name = "Consumer"
         verbose_name_plural = "Consumers"
-
-    def set_password(self, raw_password):
-        """Hashes the password and stores it."""
-        self.password = make_password(raw_password)
-
-    def check_password(self, raw_password):
-        """Verifies the provided password against the stored hash."""
-        return check_password(raw_password, self.password)

@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-o4sn5a9ke9wcl5j15ouy@d-9v9qtzq401q&z3@sm39pi27q8aw'
+SECRET_KEY = 'django-insecure-2ybhoc03g5#2m$n*$!w)v@s2ug3wq9r9fq^gqp3mwe=0dj7#oj'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -31,6 +33,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,18 +41,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'rest_framework',  # Add Django REST framework
-    'rest_framework_simplejwt',
-    'drf_yasg',
-    'corsheaders',
+    'rest_framework',  
+    'rest_framework_simplejwt' ,
+    # 'corsheaders',
 
     'users',
+    'inventory',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    # 'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -57,47 +60,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# SECURE_SSL_REDIRECT = True
-
 CSRF_TRUSTED_ORIGINS = [
-    "https://dev22419raktkadi.share.zrok.io",
-    "https://raktkadi.share.zrok.io",
+    # "https://dev22419raktkadi.share.zrok.io",
+    # "https://raktkadi.share.zrok.io",
+    "https://raktkadi.onrender.com",
     "http://localhost:5173",
 ]
-
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-    "https://dev22419raktkadi.share.zrok.io",
-    "https://raktkadi.share.zrok.io",
-    "http://localhost:5173",
-]
-
-CORS_ALLOW_METHODS = [
-    "DELETE",
-    "GET",
-    "OPTIONS",
-    "PATCH",
-    "POST",
-    "PUT",
-]
-
-CORS_ALLOW_HEADERS = [
-    "accept",
-    "accept-encoding",
-    "authorization",
-    "content-type",
-    "dnt",
-    "origin",
-    "user-agent",
-    "x-csrftoken",
-    "x-requested-with",
-]
-
-
-CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'raktkadi.urls'
 
@@ -173,39 +141,86 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-## settings custome ##  
+## auth user model ##
+AUTH_USER_MODEL = 'users.Admin'
 
-AUTH_USER_MODEL = 'users.Admin'  # Replace 'yourappname' with your actual app name
-
-AUTHENTICATION_BACKENDS = [
-    'users.backends.CustomAuthBackend',
-    # 'django.contrib.auth.backends.ModelBackend',  # Keep the default backend as fallback
-]
-
+## rest framework settings ##   
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
 }
 
-# Optional: Configure JWT settings
-from datetime import timedelta
+## simple jwt settings ##
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': False,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
 
 from rest_framework_simplejwt.settings import api_settings
 
 api_settings.USER_ID_FIELD = 'email'
 api_settings.USER_ID_CLAIM = 'email'
 
-SIMPLE_JWT = {
-    'USER_ID_FIELD': 'email',
-    'USER_ID_CLAIM': 'email',
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),  # Access token lifespan
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=60),    # Refresh token lifespan
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
-    'ALGORITHM': 'HS256',
-    'SIGNING_KEY': 'your_secret_key',  # Replace with a secure key
+## jazzmin settings ##
+JAZZMIN_SETTINGS = {
+    "site_title": "Raktkadi Admin",
+    "site_header": "Raktkadi",
+    "site_brand": "Raktkadi",
+    "welcome_sign": "Welcome to the Raktkadi Admin Panel",
+    "copyright": "Raktkadi",
+    "search_model": "auth.User",
+    "user_avatar": None,
+    "topmenu_links": [
+        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"model": "auth.User"},
+        {"app": "users"},
+    ],
+    "usermenu_links": [
+        {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
+    ],
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "hide_apps": [],
+    "hide_models": [],
+    "order_with_respect_to": ["auth", "users", "inventory"],
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+    },
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+    "related_modal_active": False,
+    "custom_css": None,
+    "custom_js": None,
+    "show_ui_builder": False,
 }
+
+## templates setings ## 
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+## media setings ## 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+# ## end ##

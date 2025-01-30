@@ -1,0 +1,41 @@
+
+# ## Blood Bank Registration View ##
+# class BloodBankRegistrationView(APIView):
+#     permission_classes = [AllowAny]  # Allow anyone to register
+
+#     @transaction.atomic
+#     def post(self, request):
+#         serializer = BloodBankRegistrationSerializer(data=request.data)
+#         if serializer.is_valid():
+#             try:
+#                 user = serializer.save()
+#                 return Response({
+#                     "message": "Blood bank registered successfully",
+#                     "email": user.email,
+#                     "blood_bank_name": user.blood_bank_profile.blood_bank_name,
+#                     "status": user.blood_bank_profile.status
+#                 }, status=status.HTTP_201_CREATED)
+#             except Exception as e:
+#                 return Response({
+#                     "error": str(e)
+#                 }, status=status.HTTP_400_BAD_REQUEST)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+###################### serializer ############################
+class BloodBankProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BloodBankProfile
+        fields = ['blood_bank_name', 'address', 'status', 'license_document', 
+                 'registration_certificate', 'tax_documents']
+
+
+##################### login view ################################
+return Response({
+                    "refresh": str(refresh),
+                    "access": str(refresh.access_token),
+                    "user": user_data
+                }, status=status.HTTP_200_OK)
+
+
+okay so now understand the functions of my app first 

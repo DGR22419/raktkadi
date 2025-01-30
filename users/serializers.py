@@ -1,11 +1,11 @@
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
+from .models import *
 from django.contrib.auth import authenticate
-from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Admin, BloodBank, Staff, Donor, Consumer
-import logging
 
-logger = logging.getLogger(__name__)
+User = get_user_model()
 
+## login serializer ##
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
@@ -14,119 +14,255 @@ class LoginSerializer(serializers.Serializer):
         email = data.get('email')
         password = data.get('password')
 
-        if email is None or password is None:
-            raise serializers.ValidationError("Must include 'email' and 'password'")
+        if email and password:
+            user = authenticate(email=email, password=password)
+            if user:
+                if not user.is_active:
+                    raise serializers.ValidationError("User account is disabled.")
+                return user
+            raise serializers.ValidationError("Invalid email or password.")
+        raise serializers.ValidationError("Must include 'email' and 'password'.")
 
-        user = authenticate(request=self.context.get('request'), username=email, password=password)
-        if not user:
-            logger.warning(f"Failed authentication attempt for: {email}")
-            raise serializers.ValidationError("Invalid credentials")
-        if not user.is_active:
-            raise serializers.ValidationError("User account is disabled")
+## Blood Bank Profile serializer ##
+class BloodBankProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BloodBankProfile
+        fields = ['address', 'status', 'license_document', 
+                 'registration_certificate', 'tax_documents']
 
-        refresh = RefreshToken.for_user(user)
+class BloodBankRegistrationSerializer(serializers.Serializer):
+    # User fields
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+    name = serializers.CharField()
+    contact = serializers.CharField()
+    
+    # Blood Bank Profile fields
+    # blood_bank_name = serializers.CharField()
+    address = serializers.CharField()
+    license_document = serializers.FileField(required=False)
+    registration_certificate = serializers.FileField(required=False)
+    tax_documents = serializers.FileField(required=False)
 
-        # Determine user type
-        user_type = None
-        if isinstance(user, Admin):
-            user_type = 'Admin'
-        elif isinstance(user, BloodBank):
-            user_type = 'BloodBank'
-        elif isinstance(user, Staff):
-            user_type = 'Staff'
-        elif isinstance(user, Donor):
-            user_type = 'Donor'
-        elif isinstance(user, Consumer):
-            user_type = 'Consumer'
-
-        return {
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-            'user_type': user_type,
+    def create(self, validated_data):
+        # Extract profile data
+        profile_data = {
+            'address': validated_data.pop('address'),
+            'license_document': validated_data.pop('license_document', None),
+            'registration_certificate': validated_data.pop('registration_certificate', None),
+            'tax_documents': validated_data.pop('tax_documents', None),
         }
-    
+
+        # Create user
+        validated_data['user_type'] = 'BLOOD_BANK'
+        user = User.objects.create_user(**validated_data)
+
+        # Create blood bank profile
+        BloodBankProfile.objects.create(user=user, **profile_data)
+
+        return user
+
 class BloodBankSerializer(serializers.ModelSerializer):
+    address = serializers.CharField(source='blood_bank_profile.address')
+    status = serializers.CharField(source='blood_bank_profile.status')
+    license_document = serializers.FileField(source='blood_bank_profile.license_document', required=False)
+    registration_certificate = serializers.FileField(source='blood_bank_profile.registration_certificate', required=False)
+    tax_documents = serializers.FileField(source='blood_bank_profile.tax_documents', required=False)
+
     class Meta:
-        model = BloodBank
-        fields = ['email', 'name', 'password', 'contact', 'address', 'blood_bank_name']
+        model = User
+        fields = ['email', 'name', 'contact', 'address', 'status',
+                 'license_document', 'registration_certificate', 'tax_documents', 'is_active']
+
+    def update(self, instance, validated_data):
+        profile_data = validated_data.pop('blood_bank_profile', {})
+        
+        # Update User model fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        # Update BloodBankProfile fields
+        profile = instance.blood_bank_profile
+        for attr, value in profile_data.items():
+            setattr(profile, attr, value)
+        profile.save()
+
+        return instance
+
+
+## Staff profile serializer ##
+class StaffProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StaffProfile
+        fields = ['role', ]
+
+class StaffRegistrationSerializer(serializers.Serializer):
+    # User fields
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+    name = serializers.CharField()
+    contact = serializers.CharField()
+    
+    # Staff Profile fields
+    role = serializers.CharField()
 
     def create(self, validated_data):
-        blood_bank = BloodBank(**validated_data)
-        blood_bank.set_password(validated_data['password'])  # Hash the password
-        blood_bank.save()
-        return blood_bank
+        # Extract profile data
+        profile_data = {
+            'role': validated_data.pop('role'),
+        }
 
-    def validate_email(self, value):
-        if BloodBank.objects.filter(email=value).exists():
-            raise serializers.ValidationError("A blood bank with this email already exists.")
-        return value
+        # Create user
+        validated_data['user_type'] = 'STAFF'
+        user = User.objects.create_user(**validated_data)
 
-    def validate_password(self, value):
-        if len(value) < 8:
-            raise serializers.ValidationError("Password must be at least 8 characters long.")
-        return value
-    
+        # Create staff profile
+        StaffProfile.objects.create(user=user, **profile_data)
+
+        return user
+
 class StaffSerializer(serializers.ModelSerializer):
+    role = serializers.CharField(source='staff_profile.role')
+
     class Meta:
-        model = Staff
-        fields = ['email', 'name', 'password', 'contact', 'role', 'first_name', 'last_name']
+        model = User
+        fields = ['email', 'name', 'contact', 'role', 'is_active']
+
+    def update(self, instance, validated_data):
+        profile_data = validated_data.pop('staff_profile', {})
+        
+        # Update User model fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        # Update StaffProfile fields
+        profile = instance.staff_profile
+        for attr, value in profile_data.items():
+            setattr(profile, attr, value)
+        profile.save()
+
+        return instance
+    
+
+## Donor profile serializer ##
+class DonorProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DonorProfile
+        fields = ['blood_group', 'last_donation','address']
+
+class DonorRegistrationSerializer(serializers.Serializer):
+    # User fields
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+    name = serializers.CharField()
+    contact = serializers.CharField()
+    
+    # Donor Profile fields
+    blood_group = serializers.CharField()
+    last_donation = serializers.DateField(required=False)
+    address = serializers.CharField()
 
     def create(self, validated_data):
-        staff = Staff(**validated_data)
-        staff.set_password(validated_data['password'])  # Hash the password
-        staff.save()
-        return staff
+        # Extract profile data
+        profile_data = {
+            'blood_group': validated_data.pop('blood_group'),
+            'last_donation': validated_data.pop('last_donation', None),
+            'address': validated_data.pop('address'),
+        }
 
-    def validate_email(self, value):
-        if Staff.objects.filter(email=value).exists():
-            raise serializers.ValidationError("A staff member with this email already exists.")
-        return value
+        # Create user
+        validated_data['user_type'] = 'DONOR'
+        user = User.objects.create_user(**validated_data)
 
-    def validate_password(self, value):
-        if len(value) < 8:
-            raise serializers.ValidationError("Password must be at least 8 characters long.")
-        return value
-    
-## donor serializer ##
+        # Create donor profile
+        DonorProfile.objects.create(user=user, **profile_data)
+
+        return user
+
 class DonorSerializer(serializers.ModelSerializer):
+    blood_group = serializers.CharField(source='donor_profile.blood_group')
+    last_donation = serializers.DateField(source='donor_profile.last_donation', required=False)
+    address = serializers.CharField(source='donor_profile.address')
+
     class Meta:
-        model = Donor
-        fields = ['email', 'name', 'password', 'contact', 'address', 'blood_group', 'first_name', 'last_name']
+        model = User
+        fields = ['email', 'name', 'contact', 'blood_group', 'last_donation','address', 'is_active']
 
-    def create(self, validated_data):
-        donor = Donor(**validated_data)
-        donor.set_password(validated_data['password'])  # Hash the password
-        donor.save()
-        return donor
+    def update(self, instance, validated_data):
+        profile_data = validated_data.pop('donor_profile', {})
+        
+        # Update User model fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
 
-    def validate_email(self, value):
-        if Donor.objects.filter(email=value).exists():
-            raise serializers.ValidationError("A donor with this email already exists.")
-        return value
+        # Update DonorProfile fields
+        profile = instance.donor_profile
+        for attr, value in profile_data.items():
+            setattr(profile, attr, value)
+        profile.save()
 
-    def validate_password(self, value):
-        if len(value) < 8:
-            raise serializers.ValidationError("Password must be at least 8 characters long.")
-        return value
+        return instance
     
-## consumer serializer ##
-class ConsumerSerializer(serializers.ModelSerializer):
+
+## Consumer profile serializer ##
+class ConsumerProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Consumer
-        fields = ['email', 'name', 'password', 'contact', 'address', 'blood_group', 'first_name', 'last_name']
+        model = ConsumerProfile
+        fields = ['blood_group', 'address']
+
+class ConsumerRegistrationSerializer(serializers.Serializer):
+    # User fields
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+    name = serializers.CharField()
+    contact = serializers.CharField()
+    
+    # Consumer Profile fields
+    blood_group = serializers.CharField()
+    address = serializers.CharField()
 
     def create(self, validated_data):
-        consumer = Consumer(**validated_data)
-        consumer.set_password(validated_data['password'])  # Hash the password
-        consumer.save()
-        return consumer
+        # Extract profile data
+        profile_data = {
+            'blood_group': validated_data.pop('blood_group'),
+            'address': validated_data.pop('address'),
+        }
 
-    def validate_email(self, value):
-        if Consumer.objects.filter(email=value).exists():
-            raise serializers.ValidationError("A consumer with this email already exists.")
-        return value
+        # Create user
+        validated_data['user_type'] = 'CONSUMER'
+        user = User.objects.create_user(**validated_data)
 
-    def validate_password(self, value):
-        if len(value) < 8:
-            raise serializers.ValidationError("Password must be at least 8 characters long.")
-        return value
+        # Create consumer profile
+        ConsumerProfile.objects.create(user=user, **profile_data)
+
+        return user
+
+class ConsumerSerializer(serializers.ModelSerializer):
+    blood_group = serializers.CharField(source='consumer_profile.blood_group')
+    address = serializers.CharField(source='consumer_profile.address')
+
+    class Meta:
+        model = User
+        fields = ['email', 'name', 'contact', 'blood_group', 'address', 'is_active']
+
+    def update(self, instance, validated_data):
+        profile_data = validated_data.pop('consumer_profile', {})
+        
+        # Update User model fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        # Update ConsumerProfile fields
+        profile = instance.consumer_profile
+        for attr, value in profile_data.items():
+            setattr(profile, attr, value)
+        profile.save()
+
+        return instance
+
+
+

@@ -19,6 +19,15 @@ class InventoryAlertAdmin(admin.ModelAdmin):
     list_filter = ('alert_type', 'blood_group', 'is_active', 'created_at', 'resolved_at')
     ordering = ('-created_at',)
 
+class BloodRequestAdmin(admin.ModelAdmin):
+    list_display = ('id', 'consumer', 'blood_bank', 'blood_group', 'units_required', 'priority', 'status', 'requested_date', 'required_date')
+    list_filter = ('status', 'priority', 'blood_group', 'requested_date')
+    search_fields = ('notes', 'rejection_reason')
+    readonly_fields = ('requested_date', 'response_date')
+    
+    # def get_queryset(self, request):
+    #     return super().get_queryset(request).select_related('consumer', 'blood_bank')
 admin.site.register(BloodBag, BloodBagAdmin)
 admin.site.register(StockTransaction, StockTransactionAdmin)
+admin.site.register(BloodRequest , BloodRequestAdmin)
 # admin.site.register(InventoryAlert, InventoryAlertAdmin)

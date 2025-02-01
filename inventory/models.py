@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.timezone import now
-from users.models import Admin, BloodBankProfile, DonorProfile
+from users.models import Admin, BloodBankProfile, DonorProfile , ConsumerProfile
 
 class BloodBag(models.Model):   
     BLOOD_GROUPS = [
@@ -84,3 +84,50 @@ class InventoryAlert(models.Model):
 
     def __str__(self):
         return f"{self.alert_type} - {self.blood_group}"
+    
+class BloodRequest(models.Model):
+    STATUS_CHOICES = [
+        ('PENDING', 'Pending'),
+        ('APPROVED', 'Approved'),
+        ('REJECTED', 'Rejected'),
+        ('COMPLETED', 'Completed')
+    ]
+
+    PRIORITY_CHOICES = [
+        ('NORMAL', 'Normal'),
+        ('URGENT', 'Urgent'),
+        ('EMERGENCY', 'Emergency')
+    ]
+
+    consumer = models.ForeignKey(ConsumerProfile, on_delete=models.CASCADE, related_name='blood_requests')
+    blood_bank = models.ForeignKey(BloodBankProfile, on_delete=models.CASCADE, related_name='received_requests')
+    
+    # Request Details
+    blood_group = models.CharField(max_length=5)
+    units_required = models.PositiveIntegerField()
+    priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='NORMAL')
+    
+    # Patient Details
+    patient_name = models.CharField(max_length=255)
+    patient_age = models.PositiveIntegerField()
+    patient_gender = models.CharField(max_length=10)
+    diagnosis = models.TextField()
+    hospital_name = models.CharField(max_length=255)
+    
+    # Status tracking
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
+    requested_date = models.DateTimeField(auto_now_add=True)
+    required_date = models.DateField()
+    response_date = models.DateTimeField(null=True, blank=True)
+    
+    # If request is approved, which blood bags were allocated
+    allocated_blood_bags = models.ManyToManyField(BloodBag, blank=True)
+    
+    # Additional Info
+    notes = models.TextField(blank=True, null=True)
+    rejection_reason = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Request {self.id} - {self.blood_group} for {self.patient_name}"
+    
+## end ##

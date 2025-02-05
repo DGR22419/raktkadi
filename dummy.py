@@ -35,7 +35,7 @@ def create_sequential_users(num_users=10):
     for i in range(1, num_users + 1):
         # Create Blood Bank users
         bb_user = Admin.objects.create_user(
-            email=f'demo{i}@bank.com', 
+            email=f'hospital{i}@mail.com', 
             password='Pass1234', 
             name=fake.name(),
             contact=f"+1{fake.random_number(digits=10)}",
@@ -45,7 +45,7 @@ def create_sequential_users(num_users=10):
 
         # Create Staff users
         staff_user = Admin.objects.create_user(
-            email=f'demo{i}@staff.com', 
+            email=f'staff{i}@mail.com', 
             password='Pass1234', 
             name=fake.name(),
             contact=f"+1{fake.random_number(digits=10)}",
@@ -55,7 +55,7 @@ def create_sequential_users(num_users=10):
 
         # Create Donor users
         donor_user = Admin.objects.create_user(
-            email=f'demo{i}@donor.com', 
+            email=f'donor{i}@mail.com', 
             password='Pass1234', 
             name=fake.name(),
             contact=f"+1{fake.random_number(digits=10)}",
@@ -65,7 +65,7 @@ def create_sequential_users(num_users=10):
 
         # Create Consumer users
         consumer_user = Admin.objects.create_user(
-            email=f'demo{i}@consumer.com', 
+            email=f'consumer{i}@mail.com', 
             password='Pass1234', 
             name=fake.name(),
             contact=f"+1{fake.random_number(digits=10)}",

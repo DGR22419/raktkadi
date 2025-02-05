@@ -1,0 +1,23 @@
+[2025-02-05 23:31:31] INFO - Login attempt - Email: demo@demo.com
+[2025-02-05 23:31:31] INFO - Successful login - Email: demo@demo.com, Type: ADMIN
+[2025-02-05 23:39:27] INFO - Login attempt - Email: demo@demo.com
+[2025-02-05 23:39:27] INFO - Successful login - Email: demo@demo.com, Type: ADMIN
+[2025-02-05 23:39:27] INFO - LoginView.post took 261.82ms to execute
+[2025-02-05 23:39:50] INFO - Login attempt - Email: demo@demo.com
+[2025-02-05 23:39:50] INFO - Successful login - Email: demo@demo.com, Type: ADMIN
+[2025-02-05 23:39:50] INFO - LoginView.post took 225.69ms to execute
+[2025-02-05 23:41:21] INFO - Blood bank update attempt - Email: dev@bank.com
+[2025-02-05 23:41:39] INFO - Blood bank update attempt - Email: dev@bank.com
+[2025-02-05 23:41:55] INFO - Blood bank update attempt - Email: dev@bank.com
+[2025-02-05 23:42:25] INFO - Blood bank update attempt - Email: hospital1@mail.com
+[2025-02-05 23:42:25] INFO - Blood bank updated successfully - Email: hospital1@mail.com
+[2025-02-05 23:42:25] INFO - BloodBankView.put took 7.03ms to execute
+[2025-02-05 23:43:11] INFO - Login attempt - Email: demo@demo.com
+[2025-02-05 23:43:12] INFO - Successful login - Email: demo@demo.com, Type: ADMIN
+[2025-02-05 23:43:12] INFO - LoginView.post took 272.26ms to execute
+[2025-02-05 23:43:41] INFO - Blood bank update attempt - Email: hospital1@mail.com
+[2025-02-05 23:43:41] INFO - Blood bank updated successfully - Email: hospital1@mail.com
+[2025-02-05 23:43:41] INFO - BloodBankView.put took 6.51ms to execute
+[2025-02-05 23:43:54] INFO - Login attempt - Email: demo@demo.com
+[2025-02-05 23:43:55] WARNING - Failed login attempt - Errors: {'non_field_errors': [ErrorDetail(string='Invalid email or password.', code='invalid')]}
+[2025-02-05 23:43:55] INFO - LoginView.post took 223.37ms to execute

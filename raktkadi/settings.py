@@ -225,4 +225,49 @@ TEMPLATES = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
+## logging settings ##
+# settings.py
+# import os
+# from datetime import datetime
+
+# # Logging configuration
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'formatters': {
+#         'api_formatter': {
+#             'format': '[%(asctime)s] %(levelname)s - %(message)s',
+#             'datefmt': '%Y-%m-%d %H:%M:%S'
+#         },
+#     },
+#     'handlers': {
+#         'api_log_file': {
+#             'level': 'INFO',
+#             'class': 'logging.FileHandler',
+#             'filename': os.path.join(BASE_DIR, 'logs', f'api_log_{datetime.now().strftime("%Y%m%d")}.log'),
+#             'formatter': 'api_formatter',
+#         },
+#     },
+#     'loggers': {
+#         'api_logger': {
+#             'handlers': ['api_log_file'],
+#             'level': 'INFO',
+#             'propagate': True,
+#         },
+#     },
+# }
+
+# # Example usage in a view or service
+# import logging
+# logger = logging.getLogger('api_logger')
+
+# def some_api_view(request):
+#     try:
+#         # Your API logic
+#         logger.info(f"API call received: {request.method} {request.path}")
+#         # Additional logging
+#         logger.info(f"Request data: {request.POST}")
+#     except Exception as e:
+#         logger.error(f"API error: {str(e)}")
+
 # ## end ##

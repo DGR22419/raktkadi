@@ -18,7 +18,6 @@ class BloodBagSerializer(serializers.ModelSerializer):
             'volume_ml', 
             'collection_date', 
             'expiration_date', 
-            'barcode',
             'donor_email',
             'blood_bank_email'
         ]

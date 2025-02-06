@@ -39,3 +39,14 @@
 [2025-02-06 15:21:16] INFO - Blood bag created successfully - ID: 2
 [2025-02-06 15:21:16] INFO - Stock transaction created - ID: 2, Type: COLLECTION
 [2025-02-06 15:21:16] INFO - BloodBagCreateAPIView.create took 12.17ms to execute
+[2025-02-06 15:48:45] INFO - Blood bag creation attempt - Data: {'blood_group': 'O+', 'volume_ml': 500.0, 'collection_date': '2023-10-01', 'expiration_date': '2023-12-01', 'barcode': '1234567812', 'donor_email': 'donor1@mail.com', 'blood_bank_email': 'hospital1@mail.com'}
+[2025-02-06 15:48:45] ERROR - Blood bag creation validation failed - Errors: {'blood_bank_email': [ErrorDetail(string='Blood bank is not verified. Current status: PENDING', code='invalid')]}
+[2025-02-06 15:48:45] INFO - BloodBagCreateAPIView.create took 3.00ms to execute
+[2025-02-06 15:49:13] INFO - Blood bag creation attempt - Data: {'blood_group': 'O+', 'volume_ml': 500.0, 'collection_date': '2023-10-01', 'expiration_date': '2023-12-01', 'barcode': '1234567812', 'donor_email': 'donor1@mail.com', 'blood_bank_email': 'hospital1@mail.com'}
+[2025-02-06 15:49:13] INFO - Blood bag created successfully - ID: 1
+[2025-02-06 15:49:13] INFO - Stock transaction created - ID: 1, Type: COLLECTION
+[2025-02-06 15:49:13] INFO - BloodBagCreateAPIView.create took 13.70ms to execute
+[2025-02-06 15:50:25] INFO - Blood bag creation attempt - Data: {'blood_group': 'O+', 'volume_ml': 500.0, 'collection_date': '2023-10-01', 'expiration_date': '2023-12-01', 'barcode': '1234567812', 'donor_email': 'donor1@mail.com', 'blood_bank_email': 'hospital1@mail.com'}
+[2025-02-06 15:50:25] INFO - Blood bag created successfully - ID: 2
+[2025-02-06 15:50:25] INFO - Stock transaction created - ID: 2, Type: COLLECTION
+[2025-02-06 15:50:25] INFO - BloodBagCreateAPIView.create took 11.95ms to execute

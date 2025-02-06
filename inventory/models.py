@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.timezone import now
 from users.models import Admin, BloodBankProfile, DonorProfile , ConsumerProfile
+import uuid 
+
 
 class BloodBag(models.Model):   
     BLOOD_GROUPS = [
@@ -37,6 +39,42 @@ class BloodBag(models.Model):
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def generate_barcode(self):
+        """
+        Generates a unique barcode with the format:
+        BB-{blood_bank_id}-{blood_group}-{collection_date}-{unique_id}
+        Example: BB-001-AP-20250206-7A3F
+        """
+        # Format blood bank ID with leading zeros
+        bank_id = str(self.blood_bank.id).zfill(3)
+        
+        # Format blood group (remove + or - for shorter code)
+        blood_group_code = self.blood_group.replace('+', 'P').replace('-', 'N')
+        
+        # Format collection date
+        date_str = self.collection_date.strftime('%Y%m%d')
+        
+        # Generate a short unique identifier
+        unique_id = str(uuid.uuid4())[:4].upper()
+        
+        # Combine all parts
+        return f"BB-{bank_id}-{blood_group_code}-{date_str}-{unique_id}"
+
+    def save(self, *args, **kwargs):
+        # Generate barcode if it doesn't exist
+        if not self.barcode:
+            self.barcode = self.generate_barcode()
+            
+            # Ensure uniqueness
+            while BloodBag.objects.filter(barcode=self.barcode).exists():
+                self.barcode = self.generate_barcode()
+        
+        super().save(*args, **kwargs)
+
 
     def __str__(self):
         return f"{self.blood_group} Blood Bag - {self.barcode}"

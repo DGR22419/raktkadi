@@ -80,9 +80,23 @@ class BloodRequestCreateSerializer(serializers.ModelSerializer):
         consumer_email = validated_data.pop('consumer').get('user').get('email')
         blood_bank_email = validated_data.pop('blood_bank').get('user').get('email')
         
+        # from users.models import ConsumerProfile, BloodBankProfile
+        # consumer = ConsumerProfile.objects.get(user__email=consumer_email)
+        # blood_bank = BloodBankProfile.objects.get(user__email=blood_bank_email)
+
+        #DHYEY PATEL
         from users.models import ConsumerProfile, BloodBankProfile
-        consumer = ConsumerProfile.objects.get(user__email=consumer_email)
-        blood_bank = BloodBankProfile.objects.get(user__email=blood_bank_email)
+        try:
+            consumer = ConsumerProfile.objects.get(user__email=consumer_email)
+        except ConsumerProfile.DoesNotExist:
+            raise serializers.ValidationError(f"Consumer with email {consumer_email} does not exist.")
+        
+        try:
+            blood_bank = BloodBankProfile.objects.get(user__email=blood_bank_email)
+            if blood_bank.status != 'VERIFIED':
+                raise serializers.ValidationError(f"Blood bank with email {blood_bank_email} is not verified.")
+        except BloodBankProfile.DoesNotExist:
+            raise serializers.ValidationError(f"Blood bank with email {blood_bank_email} does not exist.")
         
         # Create blood request
         return BloodRequest.objects.create(

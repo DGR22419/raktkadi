@@ -70,3 +70,18 @@
 [2025-02-06 16:02:51] INFO - Blood request creation attempt - Data: {'consumer_email': 'consumer2@mail.com', 'blood_bank_email': 'hospital6@mail.com', 'blood_group': 'AA+', 'units_required': 1, 'priority': 'URGENT', 'patient_name': 'Dev Patel', 'patient_age': 21, 'patient_gender': 'Male', 'hospital_name': 'City Hospital', 'required_date': '2024-02-01', 'notes': 'Emergency surgery scheduled'}
 [2025-02-06 16:02:51] INFO - Blood request created successfully - ID: 2
 [2025-02-06 16:02:51] INFO - BloodRequestCreateView.create took 7.77ms to execute
+[2025-02-06 16:11:23] INFO - Blood request creation attempt - Data: {'consumer_email': 'consumer2@mail.com', 'blood_bank_email': 'hospital6@mail.com', 'blood_group': 'AA+', 'units_required': 1, 'priority': 'URGENT', 'patient_name': 'Dev Patel', 'patient_age': 21, 'patient_gender': 'Male', 'hospital_name': 'City Hospital', 'required_date': '2024-02-01', 'notes': 'Emergency surgery scheduled'}
+[2025-02-06 16:11:23] ERROR - Blood request creation validation failed - Errors: {'blood_group': [ErrorDetail(string='"AA+" is not a valid choice.', code='invalid_choice')]}
+[2025-02-06 16:11:23] INFO - BloodRequestCreateView.create took 3.01ms to execute
+[2025-02-06 16:15:19] INFO - Blood request creation attempt - Data: {'consumer_email': 'consumer2@mail.com', 'blood_bank_email': 'hospital6@mail.com', 'blood_group': 'A+', 'units_required': 1, 'priority': 'URGENT', 'patient_name': 'Dev Patel', 'patient_age': 21, 'patient_gender': 'Male', 'hospital_name': 'City Hospital', 'required_date': '2024-02-01', 'notes': 'Emergency surgery scheduled'}
+[2025-02-06 16:15:19] INFO - Blood request created successfully - ID: 3
+[2025-02-06 16:15:19] INFO - BloodRequestCreateView.create took 10.17ms to execute
+[2025-02-06 16:15:28] INFO - Blood request creation attempt - Data: {'consumer_email': 'consumer2@mail.com', 'blood_bank_email': 'hospital6@mail.com', 'blood_group': 'A+', 'units_required': -1, 'priority': 'URGENT', 'patient_name': 'Dev Patel', 'patient_age': 21, 'patient_gender': 'Male', 'hospital_name': 'City Hospital', 'required_date': '2024-02-01', 'notes': 'Emergency surgery scheduled'}
+[2025-02-06 16:15:28] ERROR - Blood request creation validation failed - Errors: {'units_required': [ErrorDetail(string='Ensure this value is greater than or equal to 0.', code='min_value')]}
+[2025-02-06 16:15:28] INFO - BloodRequestCreateView.create took 1.50ms to execute
+[2025-02-06 16:18:57] INFO - Blood request creation attempt - Data: {'consumer_email': 'consumer2@mail.com', 'blood_bank_email': 'hospital6@mail.com', 'blood_group': 'A+', 'units_required': 1, 'priority': 'URGENT', 'patient_name': 'Dev Patel', 'patient_age': 21, 'patient_gender': 'Male', 'hospital_name': 'City Hospital', 'required_date': '2024-02-01', 'notes': 'Emergency surgery scheduled'}
+[2025-02-06 16:18:57] INFO - Blood request created successfully - ID: 4
+[2025-02-06 16:18:57] INFO - BloodRequestCreateView.create took 10.00ms to execute
+[2025-02-06 16:19:02] INFO - Blood request creation attempt - Data: {'consumer_email': 'consumer2@mail.com', 'blood_bank_email': 'hospital6@mail.com', 'blood_group': 'AA+', 'units_required': 1, 'priority': 'URGENT', 'patient_name': 'Dev Patel', 'patient_age': 21, 'patient_gender': 'Male', 'hospital_name': 'City Hospital', 'required_date': '2024-02-01', 'notes': 'Emergency surgery scheduled'}
+[2025-02-06 16:19:02] ERROR - Blood request creation validation failed - Errors: {'blood_group': [ErrorDetail(string='"AA+" is not a valid choice.', code='invalid_choice')]}
+[2025-02-06 16:19:02] INFO - BloodRequestCreateView.create took 0.99ms to execute

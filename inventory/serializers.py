@@ -128,6 +128,11 @@ class BloodRequestResponseSerializer(serializers.ModelSerializer):
         fields = ['status', 'rejection_reason', 'notes']
         
     def validate(self, data):
+        unexpected_fields = set(self.initial_data.keys()) - set(self.fields.keys())
+        if unexpected_fields:
+            raise serializers.ValidationError(
+                f"Got unexpected fields: {', '.join(unexpected_fields)}"
+            )
         if data.get('status') == 'REJECTED' and not data.get('rejection_reason'):
             raise serializers.ValidationError("Rejection reason is required when rejecting a request")
         return data

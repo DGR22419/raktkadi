@@ -137,11 +137,21 @@ class BloodRequest(models.Model):
         ('EMERGENCY', 'Emergency')
     ]
 
+    BLOOD_GROUPS = [
+        ('A+', 'A +ve'),
+        ('A-', 'A -ve'),
+        ('B+', 'B +ve'),
+        ('B-', 'B -ve'),
+        ('AB+', 'AB +ve'),
+        ('AB-', 'AB -ve'),
+        ('O+', 'O +ve'),
+        ('O-', 'O -ve')
+    ]
     consumer = models.ForeignKey(ConsumerProfile, on_delete=models.CASCADE, related_name='blood_requests')
     blood_bank = models.ForeignKey(BloodBankProfile, on_delete=models.CASCADE, related_name='received_requests')
-    
     # Request Details
-    blood_group = models.CharField(max_length=5)
+    # blood_group = models.CharField(max_length=5)
+    blood_group = models.CharField(max_length=5, choices=BLOOD_GROUPS)
     units_required = models.PositiveIntegerField()
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='NORMAL')
     

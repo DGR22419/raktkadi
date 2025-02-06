@@ -102,8 +102,8 @@ class BloodBankProfile(models.Model):
         return f"{self.user.email}"
     
     class Meta:
-        verbose_name = "Blood Bank"
-        verbose_name_plural = "Blood Banks"
+        verbose_name = "Hospital"
+        verbose_name_plural = "hospitals"
 
 class StaffProfile(models.Model):
     user = models.OneToOneField(Admin, on_delete=models.CASCADE, related_name='staff_profile')

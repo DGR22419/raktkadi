@@ -26,3 +26,9 @@
 [2025-02-06 14:40:32] INFO - Found 1 blood banks with O+ blood group available
 [2025-02-06 14:40:32] INFO - Successfully retrieved details for 1 blood banks
 [2025-02-06 14:40:32] INFO - BloodBanksByBloodGroupView.get took 3.00ms to execute
+[2025-02-06 14:48:54] INFO - Blood request creation attempt - Data: {'consumer_email': 'consumer2@mail.com', 'blood_bank_email': 'hospital6@mail.com', 'blood_group': 'A+', 'units_required': 1, 'priority': 'URGENT', 'patient_name': 'Dev Patel', 'patient_age': 21, 'patient_gender': 'Male', 'diagnosis': 'Surgery', 'hospital_name': 'City Hospital', 'required_date': '2024-02-01', 'notes': 'Emergency surgery scheduled'}
+[2025-02-06 14:48:54] INFO - Blood request created successfully - ID: 4
+[2025-02-06 14:48:54] INFO - BloodRequestCreateView.create took 9.98ms to execute
+[2025-02-06 14:49:07] INFO - Blood request creation attempt - Data: {'consumer_email': 'consumer2@mail.com', 'blood_bank_email': 'hospital6@mail.com', 'blood_group': 'A+', 'units_required': 1, 'priority': 'URGENT', 'patient_name': 'Dev Patel', 'patient_age': 21, 'patient_gender': 'Male', 'hospital_name': 'City Hospital', 'required_date': '2024-02-01', 'notes': 'Emergency surgery scheduled'}
+[2025-02-06 14:49:07] INFO - Blood request created successfully - ID: 5
+[2025-02-06 14:49:07] INFO - BloodRequestCreateView.create took 8.92ms to execute

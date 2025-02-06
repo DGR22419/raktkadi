@@ -111,7 +111,7 @@ class BloodRequest(models.Model):
     patient_name = models.CharField(max_length=255)
     patient_age = models.PositiveIntegerField()
     patient_gender = models.CharField(max_length=10)
-    diagnosis = models.TextField()
+    # diagnosis = models.TextField()
     hospital_name = models.CharField(max_length=255)
     
     # Status tracking

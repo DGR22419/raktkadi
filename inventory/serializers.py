@@ -69,7 +69,6 @@ class BloodRequestCreateSerializer(serializers.ModelSerializer):
             'patient_name',
             'patient_age',
             'patient_gender',
-            'diagnosis',
             'hospital_name',
             'required_date',
             'notes'

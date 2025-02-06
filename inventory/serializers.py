@@ -4,8 +4,8 @@ from .models import BloodBag, Admin, BloodBankProfile , BloodRequest
 class BloodBagSerializer(serializers.ModelSerializer):
     donor_email = serializers.EmailField(
         source='donor.user.email', 
-        required=False, 
-        allow_null=True
+        required=True, 
+        allow_null=False
     )
     blood_bank_email = serializers.EmailField(
         source='blood_bank.user.email'
@@ -25,6 +25,24 @@ class BloodBagSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'barcode': {'required': True}
         }
+
+    def validate_blood_bank_email(self, value):
+        """
+        Validate that blood bank email exists and is verified
+        """
+        try:
+            from users.models import BloodBankProfile
+            blood_bank = BloodBankProfile.objects.get(user__email=value)
+            
+            if blood_bank.status != 'VERIFIED':
+                raise serializers.ValidationError(
+                    f"Blood bank is not verified. Current status: {blood_bank.status}"
+                )
+            return value
+        except BloodBankProfile.DoesNotExist:
+            raise serializers.ValidationError(
+                "Blood bank with this email does not exist."
+            )
 
     def validate(self, data):
         """Validate collection and expiration dates"""

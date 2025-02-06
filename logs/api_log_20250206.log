@@ -32,3 +32,10 @@
 [2025-02-06 14:49:07] INFO - Blood request creation attempt - Data: {'consumer_email': 'consumer2@mail.com', 'blood_bank_email': 'hospital6@mail.com', 'blood_group': 'A+', 'units_required': 1, 'priority': 'URGENT', 'patient_name': 'Dev Patel', 'patient_age': 21, 'patient_gender': 'Male', 'hospital_name': 'City Hospital', 'required_date': '2024-02-01', 'notes': 'Emergency surgery scheduled'}
 [2025-02-06 14:49:07] INFO - Blood request created successfully - ID: 5
 [2025-02-06 14:49:07] INFO - BloodRequestCreateView.create took 8.92ms to execute
+[2025-02-06 15:21:02] INFO - Blood bag creation attempt - Data: {'blood_group': 'O+', 'volume_ml': 500.0, 'collection_date': '2023-10-01', 'expiration_date': '2023-12-01', 'barcode': '1234567812', 'donor_email': 'donor1@mail.com', 'blood_bank_email': 'hospital2@mail.com'}
+[2025-02-06 15:21:02] ERROR - Blood bag creation validation failed - Errors: {'blood_bank_email': [ErrorDetail(string='Blood bank is not verified. Current status: REJECTED', code='invalid')]}
+[2025-02-06 15:21:02] INFO - BloodBagCreateAPIView.create took 4.54ms to execute
+[2025-02-06 15:21:15] INFO - Blood bag creation attempt - Data: {'blood_group': 'O+', 'volume_ml': 500.0, 'collection_date': '2023-10-01', 'expiration_date': '2023-12-01', 'barcode': '1234567812', 'donor_email': 'donor1@mail.com', 'blood_bank_email': 'hospital1@mail.com'}
+[2025-02-06 15:21:16] INFO - Blood bag created successfully - ID: 2
+[2025-02-06 15:21:16] INFO - Stock transaction created - ID: 2, Type: COLLECTION
+[2025-02-06 15:21:16] INFO - BloodBagCreateAPIView.create took 12.17ms to execute

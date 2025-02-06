@@ -1,0 +1,28 @@
+[2025-02-06 14:33:05] INFO - Home page accessed - IP: 127.0.0.1
+[2025-02-06 14:33:05] INFO - WSGIRequest.home_view took 16.20ms to execute
+[2025-02-06 14:35:47] INFO - Blood bag creation attempt - Data: {'blood_group': 'O+', 'volume_ml': 500.0, 'collection_date': '2023-10-01', 'expiration_date': '2023-12-01', 'barcode': '1234567815', 'donor_email': 'demo1@donor.com', 'blood_bank_email': 'dhyey@gmail.com'}
+[2025-02-06 14:35:47] ERROR - Blood bag creation failed - Error: BloodBankProfile matching query does not exist.
+[2025-02-06 14:35:47] INFO - BloodBagCreateAPIView.create took 6.01ms to execute
+[2025-02-06 14:39:14] INFO - Blood bag creation attempt - Data: {'blood_group': 'O+', 'volume_ml': 500.0, 'collection_date': '2023-10-01', 'expiration_date': '2023-12-01', 'barcode': '1234567815', 'donor_email': 'donor1@mail.com', 'blood_bank_email': 'hospital1@mail.com'}
+[2025-02-06 14:39:14] INFO - Blood bag created successfully - ID: 1
+[2025-02-06 14:39:14] INFO - Stock transaction created - ID: 1, Type: COLLECTION
+[2025-02-06 14:39:14] INFO - BloodBagCreateAPIView.create took 15.35ms to execute
+[2025-02-06 14:39:47] INFO - Blood request creation attempt - Data: {'consumer_email': 'consumer2@mail.com', 'blood_bank_email': 'hospital6@mail.com', 'blood_group': 'A+', 'units_required': 1, 'priority': 'URGENT', 'patient_name': 'Dev Patel', 'patient_age': 21, 'patient_gender': 'Male', 'diagnosis': 'Surgery', 'hospital_name': 'City Hospital', 'required_date': '2024-02-01', 'notes': 'Emergency surgery scheduled'}
+[2025-02-06 14:39:47] INFO - Blood request created successfully - ID: 3
+[2025-02-06 14:39:47] INFO - BloodRequestCreateView.create took 10.00ms to execute
+[2025-02-06 14:40:00] INFO - Fetching blood banks for blood group: A+
+[2025-02-06 14:40:00] INFO - Found 0 blood banks with A+ blood group available
+[2025-02-06 14:40:00] INFO - Successfully retrieved details for 0 blood banks
+[2025-02-06 14:40:00] INFO - BloodBanksByBloodGroupView.get took 2.01ms to execute
+[2025-02-06 14:40:06] INFO - Fetching blood banks for blood group: O+
+[2025-02-06 14:40:06] INFO - Found 0 blood banks with O+ blood group available
+[2025-02-06 14:40:06] INFO - Successfully retrieved details for 0 blood banks
+[2025-02-06 14:40:06] INFO - BloodBanksByBloodGroupView.get took 2.00ms to execute
+[2025-02-06 14:40:15] INFO - Fetching blood banks for blood group: O+
+[2025-02-06 14:40:15] INFO - Found 0 blood banks with O+ blood group available
+[2025-02-06 14:40:15] INFO - Successfully retrieved details for 0 blood banks
+[2025-02-06 14:40:15] INFO - BloodBanksByBloodGroupView.get took 2.00ms to execute
+[2025-02-06 14:40:32] INFO - Fetching blood banks for blood group: O+
+[2025-02-06 14:40:32] INFO - Found 1 blood banks with O+ blood group available
+[2025-02-06 14:40:32] INFO - Successfully retrieved details for 1 blood banks
+[2025-02-06 14:40:32] INFO - BloodBanksByBloodGroupView.get took 3.00ms to execute

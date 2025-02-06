@@ -44,7 +44,13 @@ class BloodBagSerializer(serializers.ModelSerializer):
             )
 
     def validate(self, data):
-        """Validate collection and expiration dates"""
+
+        unexpected_fields = set(self.initial_data.keys()) - set(self.fields.keys())
+        if unexpected_fields:
+            raise serializers.ValidationError(
+                f"Got unexpected fields: {', '.join(unexpected_fields)}"
+            )
+        
         if data['collection_date'] >= data['expiration_date']:
             raise serializers.ValidationError("Expiration date must be after collection date")
         return data
@@ -90,6 +96,15 @@ class BloodRequestCreateSerializer(serializers.ModelSerializer):
             'required_date',
             'notes'
         ]
+
+    def validate(self, data):
+        
+        unexpected_fields = set(self.initial_data.keys()) - set(self.fields.keys())
+        if unexpected_fields:
+            raise serializers.ValidationError(
+                f"Got unexpected fields: {', '.join(unexpected_fields)}"
+            )
+        return data
 
     def create(self, validated_data):
         # Extract emails and get related objects

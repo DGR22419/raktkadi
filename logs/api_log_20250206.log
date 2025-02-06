@@ -50,3 +50,23 @@
 [2025-02-06 15:50:25] INFO - Blood bag created successfully - ID: 2
 [2025-02-06 15:50:25] INFO - Stock transaction created - ID: 2, Type: COLLECTION
 [2025-02-06 15:50:25] INFO - BloodBagCreateAPIView.create took 11.95ms to execute
+[2025-02-06 15:58:24] INFO - Blood bag creation attempt - Data: {'blood_group': 'O+', 'volume_ml': 500.0, 'collection_date': '2023-10-01', 'expiration_date': '2023-12-01', 'barcode': '1234567812', 'donor_email': 'donor1@mail.com', 'blood_bank_email': 'hospital1@mail.com'}
+[2025-02-06 15:58:24] ERROR - Blood bag creation validation failed - Errors: {'non_field_errors': [ErrorDetail(string='Got unexpected fields: barcode', code='invalid')]}
+[2025-02-06 15:58:24] INFO - BloodBagCreateAPIView.create took 3.52ms to execute
+[2025-02-06 15:58:43] INFO - Blood bag creation attempt - Data: {'blood_group': 'O+', 'volume_ml': 500.0, 'collection_date': '2023-10-01', 'expiration_date': '2023-12-01', 'donor_email': 'donor1@mail.com', 'blood_bank_email': 'hospital1@mail.com'}
+[2025-02-06 15:58:43] INFO - Blood bag created successfully - ID: 3
+[2025-02-06 15:58:43] INFO - Stock transaction created - ID: 3, Type: COLLECTION
+[2025-02-06 15:58:43] INFO - BloodBagCreateAPIView.create took 13.39ms to execute
+[2025-02-06 16:00:52] INFO - Blood request creation attempt - Data: {'consumer_email': 'consumer2@mail.com', 'blood_bank_email': 'hospital6@mail.com', 'blood_group': 'A+', 'units_required': 1, 'priority': 'URGENT', 'patient_name': 'Dev Patel', 'patient_age': 21, 'patient_gender': 'Male', 'hospital_name': 'City Hospital', 'required_date': '2024-02-01', 'notes': 'Emergency surgery scheduled'}
+[2025-02-06 16:01:23] INFO - Blood request creation attempt - Data: {'consumer_email': 'consumer2@mail.com', 'blood_bank_email': 'hospital6@mail.com', 'blood_group': 'A+', 'units_required': 1, 'priority': 'URGENT', 'patient_name': 'Dev Patel', 'patient_age': 21, 'patient_gender': 'Male', 'hospital_name': 'City Hospital', 'required_date': '2024-02-01', 'notes': 'Emergency surgery scheduled'}
+[2025-02-06 16:01:23] INFO - Blood request created successfully - ID: 1
+[2025-02-06 16:01:23] INFO - BloodRequestCreateView.create took 12.02ms to execute
+[2025-02-06 16:02:06] INFO - Blood request creation attempt - Data: {'consumer_email': 'consumer2@mail.com', 'blood_bank_email': 'hospital6@mail.com', 'blood_group': 'A+', 'units_required': 1, 'priority': 'URGENT', 'patient_name': 'Dev Patel', 'patient_age': 21, 'patient_gender': 'Male', 'hospital_name': 'City Hospital', 'required_date': '2024-02-01', 'notes': 'Emergency surgery scheduled', 'status': 'Approved'}
+[2025-02-06 16:02:06] ERROR - Blood request creation validation failed - Errors: {'non_field_errors': [ErrorDetail(string='Got unexpected fields: status', code='invalid')]}
+[2025-02-06 16:02:06] INFO - BloodRequestCreateView.create took 0.53ms to execute
+[2025-02-06 16:02:38] INFO - Blood request creation attempt - Data: {'consumer_email': 'consumer2@mail.com', 'blood_bank_email': 'hospital6@mail.com', 'blood_group': 'AA+', 'units_required': 1, 'priority': 'URGENT', 'patient_name': 'Dev Patel', 'patient_age': 21, 'patient_gender': 'Male', 'hospital_name': 'City Hospital', 'required_date': '2024-02-01', 'notes': 'Emergency surgery scheduled', 'status': 'Approved'}
+[2025-02-06 16:02:38] ERROR - Blood request creation validation failed - Errors: {'non_field_errors': [ErrorDetail(string='Got unexpected fields: status', code='invalid')]}
+[2025-02-06 16:02:38] INFO - BloodRequestCreateView.create took 0.69ms to execute
+[2025-02-06 16:02:51] INFO - Blood request creation attempt - Data: {'consumer_email': 'consumer2@mail.com', 'blood_bank_email': 'hospital6@mail.com', 'blood_group': 'AA+', 'units_required': 1, 'priority': 'URGENT', 'patient_name': 'Dev Patel', 'patient_age': 21, 'patient_gender': 'Male', 'hospital_name': 'City Hospital', 'required_date': '2024-02-01', 'notes': 'Emergency surgery scheduled'}
+[2025-02-06 16:02:51] INFO - Blood request created successfully - ID: 2
+[2025-02-06 16:02:51] INFO - BloodRequestCreateView.create took 7.77ms to execute

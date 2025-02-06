@@ -85,3 +85,27 @@
 [2025-02-06 16:19:02] INFO - Blood request creation attempt - Data: {'consumer_email': 'consumer2@mail.com', 'blood_bank_email': 'hospital6@mail.com', 'blood_group': 'AA+', 'units_required': 1, 'priority': 'URGENT', 'patient_name': 'Dev Patel', 'patient_age': 21, 'patient_gender': 'Male', 'hospital_name': 'City Hospital', 'required_date': '2024-02-01', 'notes': 'Emergency surgery scheduled'}
 [2025-02-06 16:19:02] ERROR - Blood request creation validation failed - Errors: {'blood_group': [ErrorDetail(string='"AA+" is not a valid choice.', code='invalid_choice')]}
 [2025-02-06 16:19:02] INFO - BloodRequestCreateView.create took 0.99ms to execute
+[2025-02-06 16:36:26] INFO - Blood bag creation attempt - Data: {'blood_group': 'O+', 'volume_ml': 500.0, 'collection_date': '2023-10-01', 'expiration_date': '2023-12-01', 'donor_email': 'donor1@mail.com', 'blood_bank_email': 'hospital1@mail.com'}
+[2025-02-06 16:36:26] ERROR - Blood bag creation validation failed - Errors: {'blood_bank_email': [ErrorDetail(string='Blood bank is not verified. Current status: REJECTED', code='invalid')]}
+[2025-02-06 16:36:26] INFO - BloodBagCreateAPIView.create took 4.00ms to execute
+[2025-02-06 16:36:35] INFO - Blood bag creation attempt - Data: {'blood_group': 'O+', 'volume_ml': 500.0, 'collection_date': '2023-10-01', 'expiration_date': '2023-12-01', 'donor_email': 'donor1@mail.com', 'blood_bank_email': 'hospital2@mail.com'}
+[2025-02-06 16:36:35] ERROR - Blood bag creation validation failed - Errors: {'blood_bank_email': [ErrorDetail(string='Blood bank is not verified. Current status: PENDING', code='invalid')]}
+[2025-02-06 16:36:35] INFO - BloodBagCreateAPIView.create took 1.95ms to execute
+[2025-02-06 16:36:38] INFO - Blood bag creation attempt - Data: {'blood_group': 'O+', 'volume_ml': 500.0, 'collection_date': '2023-10-01', 'expiration_date': '2023-12-01', 'donor_email': 'donor1@mail.com', 'blood_bank_email': 'hospital3@mail.com'}
+[2025-02-06 16:36:38] INFO - Blood bag created successfully - ID: 1
+[2025-02-06 16:36:38] INFO - Stock transaction created - ID: 1, Type: COLLECTION
+[2025-02-06 16:36:38] INFO - BloodBagCreateAPIView.create took 13.25ms to execute
+[2025-02-06 16:36:41] INFO - Blood bag creation attempt - Data: {'blood_group': 'O+', 'volume_ml': 500.0, 'collection_date': '2023-10-01', 'expiration_date': '2023-12-01', 'donor_email': 'donor1@mail.com', 'blood_bank_email': 'hospital3@mail.com'}
+[2025-02-06 16:36:41] INFO - Blood bag created successfully - ID: 2
+[2025-02-06 16:36:41] INFO - Stock transaction created - ID: 2, Type: COLLECTION
+[2025-02-06 16:36:41] INFO - BloodBagCreateAPIView.create took 13.25ms to execute
+[2025-02-06 16:36:47] INFO - Blood request creation attempt - Data: {'consumer_email': 'consumer2@mail.com', 'blood_bank_email': 'hospital6@mail.com', 'blood_group': 'A+', 'units_required': 1, 'priority': 'URGENT', 'patient_name': 'Dev Patel', 'patient_age': 21, 'patient_gender': 'Male', 'hospital_name': 'City Hospital', 'required_date': '2024-02-01', 'notes': 'Emergency surgery scheduled'}
+[2025-02-06 16:36:47] INFO - Blood request created successfully - ID: 72ba3c93-17b3-4fd8-b2dc-a4281f79c04a
+[2025-02-06 16:36:47] INFO - BloodRequestCreateView.create took 8.25ms to execute
+[2025-02-06 16:36:50] INFO - Blood request creation attempt - Data: {'consumer_email': 'consumer2@mail.com', 'blood_bank_email': 'hospital3@mail.com', 'blood_group': 'A+', 'units_required': 1, 'priority': 'URGENT', 'patient_name': 'Dev Patel', 'patient_age': 21, 'patient_gender': 'Male', 'hospital_name': 'City Hospital', 'required_date': '2024-02-01', 'notes': 'Emergency surgery scheduled'}
+[2025-02-06 16:36:50] INFO - Blood request created successfully - ID: 1719ba77-ae13-4c6d-8220-ce1a323c0427
+[2025-02-06 16:36:50] INFO - BloodRequestCreateView.create took 9.01ms to execute
+[2025-02-06 16:37:02] INFO - Fetching blood banks for blood group: O+
+[2025-02-06 16:37:02] INFO - Found 1 blood banks with O+ blood group available
+[2025-02-06 16:37:02] INFO - Successfully retrieved details for 1 blood banks
+[2025-02-06 16:37:02] INFO - BloodBanksByBloodGroupView.get took 3.02ms to execute

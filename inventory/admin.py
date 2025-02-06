@@ -6,6 +6,7 @@ class BloodBagAdmin(admin.ModelAdmin):
     search_fields = ('blood_group', 'barcode', 'blood_bank__blood_bank_name', 'donor__first_name', 'donor__last_name')
     list_filter = ('blood_group', 'status', 'collection_date', 'expiration_date', 'blood_bank')
     ordering = ('-collection_date',)
+    readonly_fields = ('barcode',)
 
 class StockTransactionAdmin(admin.ModelAdmin):
     list_display = ('blood_bag', 'transaction_type', 'timestamp', 'source_location', 'destination_location')

@@ -34,7 +34,7 @@ class BloodBag(models.Model):
     
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='AVAILABLE')
     
-    barcode = models.CharField(max_length=50, unique=True)
+    barcode = models.CharField(max_length=50, unique=True, editable=False)
     notes = models.TextField(blank=True, null=True)
     
     created_at = models.DateTimeField(auto_now_add=True)
@@ -74,7 +74,6 @@ class BloodBag(models.Model):
                 self.barcode = self.generate_barcode()
         
         super().save(*args, **kwargs)
-
 
     def __str__(self):
         return f"{self.blood_group} Blood Bag - {self.barcode}"
@@ -124,6 +123,7 @@ class InventoryAlert(models.Model):
         return f"{self.alert_type} - {self.blood_group}"
     
 class BloodRequest(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     STATUS_CHOICES = [
         ('PENDING', 'Pending'),
         ('APPROVED', 'Approved'),

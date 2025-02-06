@@ -14,6 +14,12 @@ class LoginSerializer(serializers.Serializer):
         email = data.get('email')
         password = data.get('password')
 
+        unexpected_fields = set(self.initial_data.keys()) - set(self.fields.keys())
+        if unexpected_fields:
+            raise serializers.ValidationError(
+                f"Got unexpected fields: {', '.join(unexpected_fields)}"
+            )
+
         if email and password:
             user = authenticate(email=email, password=password)
             if user:
@@ -44,6 +50,14 @@ class BloodBankRegistrationSerializer(serializers.Serializer):
     registration_certificate = serializers.FileField(required=False)
     tax_documents = serializers.FileField(required=False)
 
+    def validate(self, data):
+        unexpected_fields = set(self.initial_data.keys()) - set(self.fields.keys())
+        if unexpected_fields:
+            raise serializers.ValidationError(
+                f"Got unexpected fields: {', '.join(unexpected_fields)}"
+            )
+        return data
+
     def create(self, validated_data):
         # Extract profile data
         profile_data = {
@@ -73,6 +87,14 @@ class BloodBankSerializer(serializers.ModelSerializer):
         model = User
         fields = ['email', 'name', 'contact', 'address', 'status',
                  'license_document', 'registration_certificate', 'tax_documents', 'is_active']
+        
+    def validate(self, data):
+        unexpected_fields = set(self.initial_data.keys()) - set(self.fields.keys())
+        if unexpected_fields:
+            raise serializers.ValidationError(
+                f"Got unexpected fields: {', '.join(unexpected_fields)}"
+            )
+        return data
 
     def update(self, instance, validated_data):
         profile_data = validated_data.pop('blood_bank_profile', {})
@@ -107,6 +129,14 @@ class StaffRegistrationSerializer(serializers.Serializer):
     # Staff Profile fields
     role = serializers.CharField()
 
+    def validate(self, data):
+        unexpected_fields = set(self.initial_data.keys()) - set(self.fields.keys())
+        if unexpected_fields:
+            raise serializers.ValidationError(
+                f"Got unexpected fields: {', '.join(unexpected_fields)}"
+            )
+        return data
+
     def create(self, validated_data):
         # Extract profile data
         profile_data = {
@@ -128,6 +158,14 @@ class StaffSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['email', 'name', 'contact', 'role', 'is_active']
+
+    def validate(self, data):
+        unexpected_fields = set(self.initial_data.keys()) - set(self.fields.keys())
+        if unexpected_fields:
+            raise serializers.ValidationError(
+                f"Got unexpected fields: {', '.join(unexpected_fields)}"
+            )
+        return data
 
     def update(self, instance, validated_data):
         profile_data = validated_data.pop('staff_profile', {})
@@ -164,6 +202,14 @@ class DonorRegistrationSerializer(serializers.Serializer):
     last_donation = serializers.DateField(required=False)
     address = serializers.CharField()
 
+    def validate(self, data):
+        unexpected_fields = set(self.initial_data.keys()) - set(self.fields.keys())
+        if unexpected_fields:
+            raise serializers.ValidationError(
+                f"Got unexpected fields: {', '.join(unexpected_fields)}"
+            )
+        return data
+
     def create(self, validated_data):
         # Extract profile data
         profile_data = {
@@ -189,6 +235,14 @@ class DonorSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['email', 'name', 'contact', 'blood_group', 'last_donation','address', 'is_active']
+
+    def validate(self, data):
+        unexpected_fields = set(self.initial_data.keys()) - set(self.fields.keys())
+        if unexpected_fields:
+            raise serializers.ValidationError(
+                f"Got unexpected fields: {', '.join(unexpected_fields)}"
+            )
+        return data
 
     def update(self, instance, validated_data):
         profile_data = validated_data.pop('donor_profile', {})
@@ -224,6 +278,14 @@ class ConsumerRegistrationSerializer(serializers.Serializer):
     blood_group = serializers.CharField()
     address = serializers.CharField()
 
+    def validate(self, data):
+        unexpected_fields = set(self.initial_data.keys()) - set(self.fields.keys())
+        if unexpected_fields:
+            raise serializers.ValidationError(
+                f"Got unexpected fields: {', '.join(unexpected_fields)}"
+            )
+        return data
+
     def create(self, validated_data):
         # Extract profile data
         profile_data = {
@@ -247,6 +309,14 @@ class ConsumerSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['email', 'name', 'contact', 'blood_group', 'address', 'is_active']
+
+    def validate(self, data):
+        unexpected_fields = set(self.initial_data.keys()) - set(self.fields.keys())
+        if unexpected_fields:
+            raise serializers.ValidationError(
+                f"Got unexpected fields: {', '.join(unexpected_fields)}"
+            )
+        return data
 
     def update(self, instance, validated_data):
         profile_data = validated_data.pop('consumer_profile', {})

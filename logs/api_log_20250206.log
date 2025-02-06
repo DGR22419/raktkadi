@@ -109,3 +109,39 @@
 [2025-02-06 16:37:02] INFO - Found 1 blood banks with O+ blood group available
 [2025-02-06 16:37:02] INFO - Successfully retrieved details for 1 blood banks
 [2025-02-06 16:37:02] INFO - BloodBanksByBloodGroupView.get took 3.02ms to execute
+[2025-02-06 16:44:30] INFO - Login attempt - Email: demo@demo.com
+[2025-02-06 16:44:30] INFO - Successful login - Email: demo@demo.com, Type: ADMIN
+[2025-02-06 16:44:31] INFO - LoginView.post took 367.26ms to execute
+[2025-02-06 16:44:45] INFO - Login attempt - Email: demo@demo.com
+[2025-02-06 16:44:45] WARNING - Failed login attempt - Errors: {'non_field_errors': [ErrorDetail(string='Got unexpected fields: extra', code='invalid')]}
+[2025-02-06 16:44:45] INFO - LoginView.post took 0.00ms to execute
+[2025-02-06 16:46:12] INFO - Blood bank registration attempt
+[2025-02-06 16:46:12] WARNING - Blood bank registration validation failed - Errors: {'non_field_errors': [ErrorDetail(string='Got unexpected fields: extra', code='invalid')]}
+[2025-02-06 16:46:12] INFO - BloodBankView.post took 3.00ms to execute
+[2025-02-06 16:47:22] INFO - Blood bank update attempt - Email: hospital1@mail.com
+[2025-02-06 16:47:22] INFO - Blood bank updated successfully - Email: hospital1@mail.com
+[2025-02-06 16:47:22] INFO - BloodBankView.put took 6.01ms to execute
+[2025-02-06 16:47:45] INFO - Blood bank update attempt - Email: hospital1@mail.com
+[2025-02-06 16:47:45] WARNING - Blood bank update validation failed - Errors: {'non_field_errors': [ErrorDetail(string='Got unexpected fields: extra', code='invalid')]}
+[2025-02-06 16:47:45] INFO - BloodBankView.put took 5.00ms to execute
+[2025-02-06 16:48:07] INFO - Blood bank registration attempt
+[2025-02-06 16:48:07] INFO - Blood bank registered successfully - Email: demo10@bank.com
+[2025-02-06 16:48:07] INFO - BloodBankView.post took 248.53ms to execute
+[2025-02-06 16:48:10] INFO - Blood bank registration attempt
+[2025-02-06 16:48:11] ERROR - Blood bank registration failed - Error: NOT NULL constraint failed: users_admin.date_joined
+[2025-02-06 16:48:11] INFO - BloodBankView.post took 212.28ms to execute
+[2025-02-06 16:48:16] INFO - Blood bank registration attempt
+[2025-02-06 16:48:16] ERROR - Blood bank registration failed - Error: NOT NULL constraint failed: users_admin.date_joined
+[2025-02-06 16:48:16] INFO - BloodBankView.post took 219.56ms to execute
+[2025-02-06 16:48:30] INFO - Blood bank registration attempt
+[2025-02-06 16:48:31] INFO - Blood bank registered successfully - Email: demo11@bank.com
+[2025-02-06 16:48:31] INFO - BloodBankView.post took 217.79ms to execute
+[2025-02-06 16:48:45] INFO - Blood bank registration attempt
+[2025-02-06 16:48:45] WARNING - Blood bank registration validation failed - Errors: {'non_field_errors': [ErrorDetail(string='Got unexpected fields: extra', code='invalid')]}
+[2025-02-06 16:48:45] INFO - BloodBankView.post took 2.00ms to execute
+[2025-02-06 16:49:02] INFO - Blood bank registration attempt
+[2025-02-06 16:49:02] WARNING - Blood bank registration validation failed - Errors: {'non_field_errors': [ErrorDetail(string='Got unexpected fields: extra', code='invalid')]}
+[2025-02-06 16:49:02] INFO - BloodBankView.post took 3.01ms to execute
+[2025-02-06 16:49:08] INFO - Blood bank registration attempt
+[2025-02-06 16:49:08] INFO - Blood bank registered successfully - Email: demo13@bank.com
+[2025-02-06 16:49:08] INFO - BloodBankView.post took 236.69ms to execute

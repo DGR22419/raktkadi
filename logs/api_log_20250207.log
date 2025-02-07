@@ -1,0 +1,2 @@
+[2025-02-07 09:04:51] INFO - Home page accessed - IP: 127.0.0.1
+[2025-02-07 09:04:51] INFO - WSGIRequest.home_view took 18.47ms to execute

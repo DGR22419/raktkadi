@@ -1,0 +1,38 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block extrastyle %}
+{{ block.super }}
+    <style>
+        .blood-count {
+            /* font-size: 20px; */
+            font-weight: bold;
+            color: white;
+            background-color: green;
+            padding: 15px;
+            border-radius: 10px;
+            display: inline-block;
+            margin: 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    {% if request.resolver_match.url_name == "inventory_bloodbag_changelist" %}
+        <div style="margin-bottom: 20px;">
+            <div class="blood-count" >
+                <h1 align="center">{{ total }}</h1>
+                Total Blood Bags
+            </div>
+            
+            <div class="blood-count">
+                <h1 align="center">{{ count }}</h1>
+                Available Blood Bags
+            </div>
+        </div>
+    {% endif %}
+    
+    {{ block.super }}
+
+{% endblock %}

@@ -1,2 +1,59 @@
 [2025-02-07 09:04:51] INFO - Home page accessed - IP: 127.0.0.1
 [2025-02-07 09:04:51] INFO - WSGIRequest.home_view took 18.47ms to execute
+[2025-02-07 12:32:05] INFO - Blood bank registration attempt
+[2025-02-07 12:32:05] WARNING - Blood bank registration validation failed - Errors: {'city': [ErrorDetail(string='This field is required.', code='required')], 'state': [ErrorDetail(string='This field is required.', code='required')], 'pincode': [ErrorDetail(string='This field is required.', code='required')]}
+[2025-02-07 12:32:05] INFO - BloodBankView.post took 3.94ms to execute
+[2025-02-07 12:33:02] INFO - Blood bank registration attempt
+[2025-02-07 12:33:02] ERROR - Blood bank registration failed - Error: Admin() got unexpected keyword arguments: 'city', 'state', 'pincode'
+[2025-02-07 12:33:02] INFO - BloodBankView.post took 0.99ms to execute
+[2025-02-07 12:33:58] INFO - Blood bank registration attempt
+[2025-02-07 12:33:58] ERROR - Blood bank registration failed - Error: Admin() got unexpected keyword arguments: 'city', 'state', 'pincode'
+[2025-02-07 12:33:58] INFO - BloodBankView.post took 2.00ms to execute
+[2025-02-07 12:36:27] INFO - Blood bank registration attempt
+[2025-02-07 12:36:27] INFO - Blood bank registered successfully - Email: demo13@bank.com
+[2025-02-07 12:36:27] INFO - BloodBankView.post took 226.68ms to execute
+[2025-02-07 12:37:13] INFO - Blood bank update attempt - Email: hospital1@mail.com
+[2025-02-07 12:37:13] INFO - Blood bank updated successfully - Email: hospital1@mail.com
+[2025-02-07 12:37:13] INFO - BloodBankView.put took 5.51ms to execute
+[2025-02-07 12:40:07] INFO - Blood bank update attempt - Email: hospital1@mail.com
+[2025-02-07 12:40:07] INFO - Blood bank updated successfully - Email: hospital1@mail.com
+[2025-02-07 12:40:07] INFO - BloodBankView.put took 7.06ms to execute
+[2025-02-07 12:41:13] INFO - Donor registration attempt
+[2025-02-07 12:41:13] WARNING - Donor registration validation failed - Errors: {'city': [ErrorDetail(string='This field is required.', code='required')], 'state': [ErrorDetail(string='This field is required.', code='required')], 'pincode': [ErrorDetail(string='This field is required.', code='required')]}
+[2025-02-07 12:41:13] INFO - DonorView.post took 1.99ms to execute
+[2025-02-07 12:42:00] INFO - Donor registration attempt
+[2025-02-07 12:42:00] INFO - Donor registered successfully - Email: demo10@donor.com
+[2025-02-07 12:42:00] ERROR - Donor registration failed - Error: Field name `city` is not valid for model `Admin` in `users.serializers.DonorSerializer`.
+[2025-02-07 12:42:00] INFO - DonorView.post took 228.27ms to execute
+[2025-02-07 12:42:53] INFO - Donor registration attempt
+[2025-02-07 12:42:53] ERROR - Donor registration failed - Error: NOT NULL constraint failed: users_admin.date_joined
+[2025-02-07 12:42:53] INFO - DonorView.post took 225.70ms to execute
+[2025-02-07 12:42:58] INFO - Donor registration attempt
+[2025-02-07 12:42:59] INFO - Donor registered successfully - Email: demo11@donor.com
+[2025-02-07 12:42:59] INFO - DonorView.post took 228.87ms to execute
+[2025-02-07 12:43:50] INFO - Donor update attempt - Email: donor11@mail.com
+[2025-02-07 12:46:10] INFO - Donor update attempt - Email: donor11@mail.com
+[2025-02-07 12:46:20] INFO - Donor update attempt - Email: donor10@mail.com
+[2025-02-07 12:46:20] INFO - Donor updated successfully - Email: donor10@mail.com
+[2025-02-07 12:46:20] INFO - DonorView.put took 5.02ms to execute
+[2025-02-07 12:46:30] INFO - Donor registration attempt
+[2025-02-07 12:46:30] ERROR - Donor registration failed - Error: NOT NULL constraint failed: users_admin.date_joined
+[2025-02-07 12:46:30] INFO - DonorView.post took 216.18ms to execute
+[2025-02-07 12:46:54] INFO - Donor update attempt - Email: donor10@mail.com
+[2025-02-07 12:46:54] INFO - Donor updated successfully - Email: donor10@mail.com
+[2025-02-07 12:46:54] INFO - DonorView.put took 5.03ms to execute
+[2025-02-07 12:48:13] INFO - Consumer registration attempt
+[2025-02-07 12:48:13] WARNING - Consumer registration validation failed - Errors: {'city': [ErrorDetail(string='This field is required.', code='required')], 'state': [ErrorDetail(string='This field is required.', code='required')], 'pincode': [ErrorDetail(string='This field is required.', code='required')]}
+[2025-02-07 12:48:13] INFO - ConsumerView.post took 2.51ms to execute
+[2025-02-07 12:48:38] INFO - Consumer update attempt - Email: consumer10@mail.com
+[2025-02-07 12:48:38] WARNING - Consumer update validation failed - Errors: {'non_field_errors': [ErrorDetail(string='Got unexpected fields: password', code='invalid')]}
+[2025-02-07 12:48:38] INFO - ConsumerView.put took 2.51ms to execute
+[2025-02-07 12:48:51] INFO - Consumer update attempt - Email: consumer10@mail.com
+[2025-02-07 12:48:51] INFO - Consumer updated successfully - Email: consumer10@mail.com
+[2025-02-07 12:48:51] INFO - ConsumerView.put took 4.99ms to execute
+[2025-02-07 12:49:14] INFO - Consumer update attempt - Email: consumer10@mail.com
+[2025-02-07 12:49:14] INFO - Consumer updated successfully - Email: consumer10@mail.com
+[2025-02-07 12:49:14] INFO - ConsumerView.put took 4.01ms to execute
+[2025-02-07 12:49:22] INFO - Consumer update attempt - Email: consumer10@mail.com
+[2025-02-07 12:49:22] INFO - Consumer updated successfully - Email: consumer10@mail.com
+[2025-02-07 12:49:22] INFO - ConsumerView.put took 4.00ms to execute

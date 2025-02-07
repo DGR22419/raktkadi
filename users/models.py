@@ -85,6 +85,9 @@ def store_tax(instance, filename):
 class BloodBankProfile(models.Model):
     user = models.OneToOneField(Admin, on_delete=models.CASCADE, related_name='blood_bank_profile')
     address = models.TextField()
+    city = models.CharField(max_length=100 , null=True , blank=True) 
+    state = models.CharField(max_length=100  , null=True , blank=True)
+    pincode = models.CharField(max_length=6 , null=True , blank=True)
     status = models.CharField(
         max_length=10,
         choices=[('PENDING', 'Pending'), ('VERIFIED', 'Verified'), ('REJECTED', 'Rejected')],
@@ -107,6 +110,7 @@ class BloodBankProfile(models.Model):
 
 class StaffProfile(models.Model):
     user = models.OneToOneField(Admin, on_delete=models.CASCADE, related_name='staff_profile')
+    blood_bank = models.ForeignKey(BloodBankProfile, on_delete=models.CASCADE, related_name='staff_members')
     role = models.CharField(max_length=255)
     # first_name = models.CharField(max_length=255)
     # last_name = models.CharField(max_length=255)
@@ -123,6 +127,9 @@ class DonorProfile(models.Model):
     blood_group = models.CharField(max_length=5)
     last_donation = models.DateField(null=True, blank=True)
     address = models.TextField()
+    city = models.CharField(max_length=100 , null=True , blank=True)
+    state = models.CharField(max_length=100 , null=True , blank=True)
+    pincode = models.CharField(max_length=6 , null=True , blank=True)
 
     def __str__(self):
         return f"{self.user.email}"
@@ -135,6 +142,9 @@ class ConsumerProfile(models.Model):
     user = models.OneToOneField(Admin, on_delete=models.CASCADE, related_name='consumer_profile')
     blood_group = models.CharField(max_length=5)
     address = models.TextField()
+    city = models.CharField(max_length=100 , null=True , blank=True)
+    state = models.CharField(max_length=100 , null=True , blank=True)
+    pincode = models.CharField(max_length=6 , null=True , blank=True)
 
     def __str__(self):
         return f"{self.user.email}"

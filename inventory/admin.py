@@ -1,9 +1,5 @@
 from django.contrib import admin
 from .models import *
-from django.db.models import Count
-from django.template.loader import render_to_string
-from django.utils.safestring import mark_safe
-from django.contrib import messages
 
 class BloodBagAdmin(admin.ModelAdmin):
     list_display = ('blood_group', 'volume_ml', 'collection_date', 'expiration_date', 'status', 'barcode', 'blood_bank', 'donor')
@@ -11,30 +7,25 @@ class BloodBagAdmin(admin.ModelAdmin):
     list_filter = ('blood_group', 'status', 'collection_date', 'expiration_date', 'blood_bank')
     ordering = ('-collection_date',)
     readonly_fields = ('barcode',)
-    
+
     def changelist_view(self, request, extra_context=None):
-        stats_html = self.get_stats_html(request)
-        self.message_user(request, mark_safe(stats_html), level=messages.WARNING)
-        return super().changelist_view(request, extra_context=extra_context)
-    
-    def get_stats_html(self, request):
-        qs = self.get_queryset(request)
+        # Get count of available blood bags
+        available_count = BloodBag.objects.filter(status='AVAILABLE').count()
+        total_count = BloodBag.objects.count()
         
-        # Calculate statistics
-        context = {
-            'total_bags': qs.count(),
-            'available_bags': qs.filter(status='AVAILABLE').count(),
-            'reserved_bags': qs.filter(status='RESERVED').count(),
-            'used_bags': qs.filter(status='USED').count(),
-            'expired_bags': qs.filter(status='EXPIRED').count(),
-            'blood_group_stats': qs.filter(
-                status='AVAILABLE'
-            ).values('blood_group').annotate(
-                count=Count('id')
-            ).order_by('blood_group')
+        # Create the summary text
+        extra_context = extra_context or {}
+        extra_context['summary_text'] = f'Total Available Blood Bags: {available_count}'
+        extra_context['count'] = f'{available_count}'
+        extra_context['total'] = f'{total_count}'
+        
+        return super().changelist_view(request, extra_context)
+
+    class Media:
+        css = {
+            'all': ['admin/css/custom.css']
         }
-        return render_to_string('admin/inventory/blood_bags.html', context)
-    
+
 class StockTransactionAdmin(admin.ModelAdmin):
     list_display = ('blood_bag', 'transaction_type', 'timestamp', 'source_location', 'destination_location')
     search_fields = ('blood_bag__barcode', 'transaction_type', 'source_location', 'destination_location')

@@ -57,3 +57,5 @@
 [2025-02-07 12:49:22] INFO - Consumer update attempt - Email: consumer10@mail.com
 [2025-02-07 12:49:22] INFO - Consumer updated successfully - Email: consumer10@mail.com
 [2025-02-07 12:49:22] INFO - ConsumerView.put took 4.00ms to execute
+[2025-02-07 15:20:24] INFO - Home page accessed - IP: 127.0.0.1
+[2025-02-07 15:20:25] INFO - WSGIRequest.home_view took 1588.52ms to execute

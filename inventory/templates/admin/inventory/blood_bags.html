@@ -1,0 +1,103 @@
+
+{% spaceless %}
+<style>
+    .stats-container {
+        margin: 10px 0;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    
+    .stats-header {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+    }
+    
+    .stats-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .stats-button {
+        display: inline-block;
+        padding: 15px 25px;
+        margin: 5px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        text-align: center;
+        min-width: 160px;
+    }
+    
+    .stats-number {
+        font-size: 28px;
+        font-weight: bold;
+    }
+    
+    .stats-label {
+        font-size: 16px;
+    }
+    
+    .blood-groups-header {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+    }
+    
+    .blood-groups-container {
+        margin-top: 10px;
+    }
+</style>
+
+<div class="stats-container">
+    <div class="stats-header">
+        Blood Bank Statistics
+    </div>
+    
+    <div class="stats-row">
+        <div class="stats-button" style="background-color: #f8f9fa;">
+            <div class="stats-number" style="color: #333;">{{ total_bags }}</div>
+            <div class="stats-label" style="color: #666;">Total Bags</div>
+        </div>
+        
+        <div class="stats-button" style="background-color: #d4edda;">
+            <div class="stats-number" style="color: #28a745;">{{ available_bags }}</div>
+            <div class="stats-label" style="color: #155724;">Available</div>
+        </div>
+        
+        <div class="stats-button" style="background-color: #fff3cd;">
+            <div class="stats-number" style="color: #856404;">{{ reserved_bags }}</div>
+            <div class="stats-label" style="color: #856404;">Reserved</div>
+        </div>
+        
+        <div class="stats-button" style="background-color: #cce5ff;">
+            <div class="stats-number" style="color: #004085;">{{ used_bags }}</div>
+            <div class="stats-label" style="color: #004085;">Used</div>
+        </div>
+        
+        <div class="stats-button" style="background-color: #f8d7da;">
+            <div class="stats-number" style="color: #721c24;">{{ expired_bags }}</div>
+            <div class="stats-label" style="color: #721c24;">Expired</div>
+        </div>
+    </div>
+    
+    <div class="blood-groups-container">
+        <div class="blood-groups-header">
+            Available Blood Groups
+        </div>
+        <div class="stats-row">
+            {% for stat in blood_group_stats %}
+            <div class="stats-button" style="background-color: #e8f4f8;">
+                <div class="stats-number" style="color: #0056b3;">{{ stat.count }}</div>
+                <div class="stats-label" style="color: #004085;">{{ stat.blood_group }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endspaceless %}

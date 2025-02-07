@@ -8,24 +8,6 @@ class BloodBagAdmin(admin.ModelAdmin):
     ordering = ('-collection_date',)
     readonly_fields = ('barcode',)
 
-    def changelist_view(self, request, extra_context=None):
-        # Get count of available blood bags
-        available_count = BloodBag.objects.filter(status='AVAILABLE').count()
-        total_count = BloodBag.objects.count()
-        
-        # Create the summary text
-        extra_context = extra_context or {}
-        extra_context['summary_text'] = f'Total Available Blood Bags: {available_count}'
-        extra_context['count'] = f'{available_count}'
-        extra_context['total'] = f'{total_count}'
-        
-        return super().changelist_view(request, extra_context)
-
-    class Media:
-        css = {
-            'all': ['admin/css/custom.css']
-        }
-
 class StockTransactionAdmin(admin.ModelAdmin):
     list_display = ('blood_bag', 'transaction_type', 'timestamp', 'source_location', 'destination_location')
     search_fields = ('blood_bag__barcode', 'transaction_type', 'source_location', 'destination_location')

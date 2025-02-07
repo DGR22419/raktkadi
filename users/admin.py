@@ -16,7 +16,7 @@ class BloodBankProfileAdmin(admin.ModelAdmin):
     fields = ('user', 'address' ,  'license_document' , 'registration_certificate' , 'tax_documents','status')
 
 class StaffProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'role')
+    list_display = ('user', 'blood_bank' , 'role')
     search_fields = ('role',)
     list_filter = ('role',)
 

@@ -83,17 +83,20 @@ def create_sequential_users(num_users=10):
 def create_profiles(users_dict):
     """Create profiles for each user type."""
     # Blood Bank Profiles
+    blood_bank_profiles = []
     for user in users_dict['blood_bank']:
-        BloodBankProfile.objects.create(
+        profile = BloodBankProfile.objects.create(
             user=user,
             address=fake.address(),
             status=random.choice(['PENDING', 'VERIFIED', 'REJECTED'])
         )
+        blood_bank_profiles.append(profile)
 
-    # Staff Profiles
+    # Staff Profiles - now with blood bank association
     for user in users_dict['staff']:
         StaffProfile.objects.create(
             user=user,
+            blood_bank=random.choice(blood_bank_profiles),
             role=random.choice(['Manager', 'Coordinator', 'Technician', 'Receptionist'])
         )
 

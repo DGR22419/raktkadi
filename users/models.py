@@ -107,6 +107,7 @@ class BloodBankProfile(models.Model):
 
 class StaffProfile(models.Model):
     user = models.OneToOneField(Admin, on_delete=models.CASCADE, related_name='staff_profile')
+    blood_bank = models.ForeignKey(BloodBankProfile, on_delete=models.CASCADE, related_name='staff_members')
     role = models.CharField(max_length=255)
     # first_name = models.CharField(max_length=255)
     # last_name = models.CharField(max_length=255)

@@ -183,7 +183,7 @@ class BloodInventoryView(generics.ListAPIView):
             blood_group=blood_group
         ).count()
         
-        return [{'available_bags': count}]
+        return [{'units': count}]
     
     def list(self, request, *args, **kwargs):
         blood_group = self.kwargs.get('blood_group')
@@ -194,5 +194,12 @@ class BloodInventoryView(generics.ListAPIView):
             )
         
         return super().list(request, *args, **kwargs)
+
+class TotalBagsView(generics.ListAPIView):
+    serializer_class = TotalBagsSerializer
     
+    def get_queryset(self):
+        total = BloodBag.objects.filter(status='AVAILABLE').count()
+        return [{'total_bags': total}]
+
 ## end ##

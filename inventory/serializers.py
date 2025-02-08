@@ -138,6 +138,9 @@ class BloodRequestResponseSerializer(serializers.ModelSerializer):
         return data
     
 class BloodBagCountSerializer(serializers.Serializer):
-    available_bags = serializers.IntegerField()
+    units = serializers.IntegerField()
+
+class TotalBagsSerializer(serializers.Serializer):
+    total_bags = serializers.IntegerField()
 
 ## end ##

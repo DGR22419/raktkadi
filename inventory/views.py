@@ -168,3 +168,31 @@ class BloodBanksByBloodGroupView(generics.ListAPIView):
                 {"error": "Failed to fetch blood banks"}, 
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+        
+class BloodInventoryView(generics.ListAPIView):
+    serializer_class = BloodBagCountSerializer
+    permission_classes = [AllowAny]
+    
+    def get_queryset(self):
+        blood_group = self.kwargs.get('blood_group')
+        if blood_group not in dict(BloodBag.BLOOD_GROUPS):
+            return []
+            
+        count = BloodBag.objects.filter(
+            status='AVAILABLE',
+            blood_group=blood_group
+        ).count()
+        
+        return [{'available_bags': count}]
+    
+    def list(self, request, *args, **kwargs):
+        blood_group = self.kwargs.get('blood_group')
+        if blood_group not in dict(BloodBag.BLOOD_GROUPS):
+            return Response(
+                {"error": f"Invalid blood group. Valid options are: {', '.join(dict(BloodBag.BLOOD_GROUPS).keys())}"},
+                status=400
+            )
+        
+        return super().list(request, *args, **kwargs)
+    
+## end ##

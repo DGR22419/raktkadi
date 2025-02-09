@@ -48,7 +48,7 @@ class LoginView(APIView):
         if serializer.is_valid():
             user = serializer.validated_data
 
-            if user.user_type == 'BLOOD_BANK' and status != 'VERIFIED':
+            if user.user_type == 'BLOOD_BANK' and user.blood_bank_profile.status != 'VERIFIED':
                 logger.warning(f"Login attempt by unverified blood bank - Email: {user.email}")
                 return Response({
                     "error": "Your blood bank account is pending verification. Please wait for admin approval."

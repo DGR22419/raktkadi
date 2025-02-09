@@ -47,6 +47,13 @@ class LoginView(APIView):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             user = serializer.validated_data
+
+            if user.user_type == 'BLOOD_BANK' and status != 'VERIFIED':
+                logger.warning(f"Login attempt by unverified blood bank - Email: {user.email}")
+                return Response({
+                    "error": "Your blood bank account is pending verification. Please wait for admin approval."
+                }, status=status.HTTP_403_FORBIDDEN)
+
             refresh = RefreshToken.for_user(user)
             user_type = user.user_type
             logger.info(f"Successful login - Email: {user.email}, Type: {user_type}")

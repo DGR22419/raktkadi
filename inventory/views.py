@@ -8,6 +8,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.utils import timezone
 import logging
 import time
+from datetime import datetime
+from django.db.models import Count
 from functools import wraps
 
 logger = logging.getLogger('api_logger')
@@ -247,6 +249,85 @@ class TotalBagsView(generics.ListAPIView):
             )
         
         return super().list(request, *args, **kwargs)
+
+class HospitalDashboardView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    
+    @log_execution_time
+    def get(self, request, *args, **kwargs):
+        logger.info(f"Admin dashboard data request for user: {request.user.email}")
+        
+        try:
+            # Get the blood bank profile for the authenticated user
+            blood_bank = BloodBankProfile.objects.get(user=request.user)
+            
+            # Initialize response with blood groups
+            response_data = {}
+            
+            # Get available blood bags count for each blood group
+            available_counts = (
+                BloodBag.objects
+                .filter(blood_bank=blood_bank, status='AVAILABLE')
+                .values('blood_group')
+                .annotate(total=Count('blood_group'))
+            )
+            
+            # Initialize all blood groups with 0
+            for bg, _ in BloodBag.BLOOD_GROUPS:
+                response_data[bg] = 0
+                
+            # Update counts for available blood groups
+            for item in available_counts:
+                response_data[item['blood_group']] = item['total']
+            
+            # Add total available
+            response_data['total'] = sum(
+                count for bg, count in response_data.items() 
+                if bg != 'total'
+            )
+            
+            # Get today's donations count
+            today = timezone.now().date()
+            today_start = timezone.make_aware(datetime.combine(today, datetime.min.time()))
+            today_end = timezone.make_aware(datetime.combine(today, datetime.max.time()))
+            
+            # donation_today = (
+            #     StockTransaction.objects
+            #     .filter(
+            #         blood_bag__blood_bank=blood_bank,
+            #         transaction_type='COLLECTION',
+            #         timestamp=today_start
+            #     )
+            # ).count()
+
+            donation_today = (
+                BloodBag.objects
+                .filter(blood_bank=blood_bank, 
+                        status='AVAILABLE',
+                        collection_date=today
+                )
+            ).count()
+            
+            logger.info(f"Today's date range: {today_start} to {today_end}")
+            logger.info(f"Found {donation_today} donations today for blood bank {blood_bank.id}")
+            
+            response_data['donation_today'] = donation_today
+            
+            logger.info(f"Successfully retrieved dashboard data for blood bank: {blood_bank.id}")
+            return Response(response_data)
+            
+        except BloodBankProfile.DoesNotExist:
+            logger.error(f"User {request.user.email} is not associated with a blood bank")
+            return Response(
+                {"error": "User is not associated with a blood bank"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        except Exception as e:
+            logger.error(f"Error fetching dashboard data - Error: {str(e)}")
+            return Response(
+                {"error": "Failed to fetch dashboard data"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 ## end ##

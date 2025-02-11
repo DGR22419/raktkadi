@@ -136,11 +136,5 @@ class BloodRequestResponseSerializer(serializers.ModelSerializer):
         if data.get('status') == 'REJECTED' and not data.get('rejection_reason'):
             raise serializers.ValidationError("Rejection reason is required when rejecting a request")
         return data
-    
-class BloodBagCountSerializer(serializers.Serializer):
-    units = serializers.IntegerField()
-
-class TotalBagsSerializer(serializers.Serializer):
-    total_bags = serializers.IntegerField()
 
 ## end ##

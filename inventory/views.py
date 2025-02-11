@@ -170,86 +170,7 @@ class BloodBanksByBloodGroupView(generics.ListAPIView):
                 {"error": "Failed to fetch blood banks"}, 
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-        
-class BloodInventoryView(generics.ListAPIView):
-    serializer_class = BloodBagCountSerializer
-    permission_classes = [IsAuthenticated]
-    
-    def get_queryset(self):
-        blood_group = self.kwargs.get('blood_group')
-        
-        # Check if invalid blood group
-        if blood_group not in dict(BloodBag.BLOOD_GROUPS):
-            return []
-            
-        # Get the blood bank profile for the authenticated user
-        try:
-            blood_bank = BloodBankProfile.objects.get(user=self.request.user)
-        except BloodBankProfile.DoesNotExist:
-            return []
-            
-        # Get count of available bags for the specific blood bank and blood group
-        count = BloodBag.objects.filter(
-            blood_bank=blood_bank,
-            status='AVAILABLE',
-            blood_group=blood_group
-        ).count()
-        
-        return [{'units': count}]
-    
-    def list(self, request, *args, **kwargs):
-        blood_group = self.kwargs.get('blood_group')
-        
-        # Validate blood group
-        if blood_group not in dict(BloodBag.BLOOD_GROUPS):
-            return Response(
-                {"error": f"Invalid blood group. Valid options are: {', '.join(dict(BloodBag.BLOOD_GROUPS).keys())}"},
-                status=400
-            )
-            
-        # Check if user is associated with a blood bank
-        try:
-            BloodBankProfile.objects.get(user=request.user)
-        except BloodBankProfile.DoesNotExist:
-            return Response(
-                {"error": "User is not associated with a blood bank"},
-                status=403
-            )
-        
-        return super().list(request, *args, **kwargs)
-    
-class TotalBagsView(generics.ListAPIView):
-    serializer_class = TotalBagsSerializer
-    # authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    
-    def get_queryset(self):
-        # Get the blood bank profile for the authenticated user
-        try:
-            blood_bank = BloodBankProfile.objects.get(user=self.request.user)
-        except BloodBankProfile.DoesNotExist:
-            return []
-            
-        # Get total count of available bags for the specific blood bank
-        total = BloodBag.objects.filter(
-            blood_bank=blood_bank,
-            status='AVAILABLE'
-        ).count()
-        
-        return [{'total_bags': total}]
-    
-    def list(self, request, *args, **kwargs):
-        # Check if user is associated with a blood bank
-        try:
-            BloodBankProfile.objects.get(user=request.user)
-        except BloodBankProfile.DoesNotExist:
-            return Response(
-                {"error": "User is not associated with a blood bank"},
-                status=403
-            )
-        
-        return super().list(request, *args, **kwargs)
-
+      
 class HospitalDashboardView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     
@@ -312,6 +233,14 @@ class HospitalDashboardView(generics.ListAPIView):
             logger.info(f"Found {donation_today} donations today for blood bank {blood_bank.id}")
             
             response_data['donation_today'] = donation_today
+
+            pending_requests = BloodRequest.objects.filter(
+                blood_bank=blood_bank,
+                status='PENDING'
+            ).count()
+            
+            logger.info(f"Found {pending_requests} pending requests for blood bank {blood_bank.id}")
+            response_data['pending_requests'] = pending_requests
             
             logger.info(f"Successfully retrieved dashboard data for blood bank: {blood_bank.id}")
             return Response(response_data)
